@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "386300278845",
+    "project_id": "school-facility-fanagement",
+    "storage_bucket": "school-facility-fanagement.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386300278845:android:5fae90d5622187ddd9d254",
+        "android_client_info": {
+          "package_name": "com.example.school_facility_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTRj_gQGsWgNY2xJU-moiHZoMAtKdAdio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
