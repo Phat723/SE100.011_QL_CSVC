@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_facility_management/Firebase/firebase_auth_services.dart';
 import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/my_button.dart';
+import '../Controllers/Auth_Controllers.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  AuthController authController = AuthController();
 
   @override
   void dispose(){
@@ -62,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: emailController,
+                  controller: authController.loginEmailController,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -87,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: passwordController,
+                  controller: authController.loginPasswordController,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -120,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: MyButton(
                     onPressed: () {
                       _signIn();
+                      authController.loginUser();
                     },
                     text: "Đăng nhập",
                   ),
@@ -132,8 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
   void _signIn() async{
-    String email = emailController.text;
-    String password = passwordController.text;
+    String email = authController.loginEmailController.text;
+    String password = authController.loginPasswordController.text;
     User? user =await _auth.signInWithEmailAndPassword(email, password);
     if(user != null){
       print("User is successfully created");

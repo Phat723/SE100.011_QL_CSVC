@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:school_facility_management/Screen/home_screen.dart';
+import 'package:school_facility_management/Screen/login_screen.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
 
@@ -129,6 +130,14 @@ class _UserManagementState extends State<UserManagement> {
               leading: const Icon(Icons.person_add_alt_1),
               title: const Text('User Management'),
               onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add_alt_1),
+              title: const Text('Log Out'),
+              onTap: () {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+              },
             ),
           ],
         ),
