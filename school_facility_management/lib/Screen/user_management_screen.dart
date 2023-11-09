@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
@@ -64,7 +65,28 @@ class _UserManagementState extends State<UserManagement> {
                         ],
                       ),
                       subtitle: Text(items[index]["Email"]),
-                      trailing: const Icon(Icons.more_vert),
+
+                      trailing: PopupMenuButton<int>(
+
+                        itemBuilder: (BuildContext context) =>[
+                        const PopupMenuItem(value: 0, child: Text("Remove")
+                        ),
+                          const PopupMenuItem(value: 1, child: Text("Edit"))
+                        ],
+                        onSelected:(int value) {
+                          switch(value){
+                            case 0: //Remove
+                                  collection.doc(items[index]["id"]).delete();
+                                  Fluttertoast.showToast(msg: "Successfully deleted");
+                                  loadUsers();
+                            break;
+                            case 1:
+                            break;
+                          }
+
+                        },
+                      )
+
                     ),
                   );
                 })

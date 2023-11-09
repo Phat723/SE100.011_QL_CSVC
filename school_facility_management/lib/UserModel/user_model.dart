@@ -20,7 +20,21 @@ class MyUser {
     required this.email,
     required this.role
   });
+
   Map<String, dynamic> toMap(){
+    return {
+      "id": id,
+      "Username": username,
+      "Password": password,
+      "BirthDay": birthDay,
+      "Gender": gender,
+      "PhoneNum": phoneNum,
+      "State": state,
+      "Email": email,
+      "Role": role
+    };
+  }
+  toJson() {
     return {
       "id": id,
       "Username": username,
