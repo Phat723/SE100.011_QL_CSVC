@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
@@ -41,33 +42,54 @@ class _UserManagementState extends State<UserManagement> {
       body: Center(
         child: isLoaded
             ? ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
-                      },
-                      shape: RoundedRectangleBorder(
-                          side: const BorderSide(width: 2),
-                          borderRadius: BorderRadius.circular(20)),
-                      leading: const CircleAvatar(
-                        backgroundColor: Colors.green,
-                        child: Icon(Icons.person),
-                      ),
-                      title: Row(
-                        children: [
-                          Text(items[index]["Username"] ?? "Not given"),
-                          const SizedBox(width: 10),
-                          Text(items[index]["Role"] ?? "Not given"),
-                        ],
-                      ),
-                      subtitle: Text(items[index]["Email"]),
-                      trailing: const Icon(Icons.more_vert),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
+                    },
+                    shape: RoundedRectangleBorder(
+                        side: const BorderSide(width: 2),
+                        borderRadius: BorderRadius.circular(20)),
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.green,
+                      child: Icon(Icons.person),
                     ),
-                  );
-                })
+                    title: Row(
+                      children: [
+                        Text(items[index]["Username"] ?? "Not given"),
+                        const SizedBox(width: 10),
+                        Text(items[index]["Role"] ?? "Not given"),
+                      ],
+                    ),
+                    subtitle: Text(items[index]["Email"]),
+
+                    trailing: PopupMenuButton<int>(
+
+                      itemBuilder: (BuildContext context) =>[
+                        const PopupMenuItem(value: 0, child: Text("Remove")
+                        ),
+                        const PopupMenuItem(value: 1, child: Text("Edit"))
+                      ],
+                      onSelected:(int value) {
+                        switch(value){
+                          case 0: //Remove
+                            collection.doc(items[index]["id"]).delete();
+                            Fluttertoast.showToast(msg: "Successfully deleted");
+                            loadUsers();
+                            break;
+                          case 1:
+                            break;
+                        }
+
+                      },
+                    )
+
+                ),
+              );
+            })
             : const Text("No data"),
       ),
       appBar: AppBar(
