@@ -1,7 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:school_facility_management/Firebase/firebase_auth_services.dart';
-import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/my_button.dart';
 import '../Controllers/Auth_Controllers.dart';
 
@@ -13,12 +10,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-  final FirebaseAuthServices _auth = FirebaseAuthServices();
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  AuthController authController = AuthController();
+  final AuthController authController = AuthController();
 
   @override
   void dispose(){
@@ -121,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   child: MyButton(
                     onPressed: () {
-                      _signIn();
+                    //  _signIn();
                       authController.loginUser();
                     },
                     text: "Đăng nhập",
@@ -134,16 +128,19 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-  void _signIn() async{
-    String email = authController.loginEmailController.text;
-    String password = authController.loginPasswordController.text;
-    User? user =await _auth.signInWithEmailAndPassword(email, password);
-    if(user != null){
-      print("User is successfully created");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
-    else{
-      print("Some error happen");
-    }
-  }
+//   void _signIn() async{
+//     String email = authController.loginEmailController.text;
+//     String password = authController.loginPasswordController.text;
+//     User? user =await _auth.signInWithEmailAndPassword(email, password);
+//     if(user != null){
+//       print("User is successfully created");
+// /*
+//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+// */
+//     Get.offAll(const NavigatorHomeScreen());
+//     }
+//     else{
+//       print("Some error happen");
+//     }
+//   }
 }

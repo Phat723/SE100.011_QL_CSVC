@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/Screen/login_screen.dart';
+import '../Screen/navigator_home_screen.dart';
 
 class AuthController extends GetxController {
   // sign up text editing controllers
@@ -22,15 +22,11 @@ class AuthController extends GetxController {
         email: loginEmailController.text,
         password: loginPasswordController.text);
 
-      // lets save user with shared prefrences
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("userID", user.user!.uid);
       print(user.user!.uid);
-      Get.to(const HomeScreen());
+      Get.to(const NavigatorHomeScreen());
   }
-
-  // Let's make a function for logout
 
   Future<void> logoutUser() async {
     await _auth.signOut();

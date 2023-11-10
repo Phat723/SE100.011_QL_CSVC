@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/Screen/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:school_facility_management/Screen/navigator_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Firebase/firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  //runApp(const MyApp());
+ // runApp(const MyApp());
+  Get.testMode= true;
   runApp (const GetMaterialApp(home: LoginScreen()));
   _init();
 }
@@ -19,10 +20,8 @@ _init() async {
   final token = prefs.getString("userID");
   if (token != null) {
     print('Token: $token');
-    Get.offAll(const HomeScreen());
+    Get.offAll(const NavigatorHomeScreen());
 
-  } else {
-    Get.to(const LoginScreen());
   }
 }
 class MyApp extends StatelessWidget {

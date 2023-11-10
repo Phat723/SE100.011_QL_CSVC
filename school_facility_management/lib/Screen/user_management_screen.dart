@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:school_facility_management/Screen/home_screen.dart';
-import 'package:school_facility_management/Screen/login_screen.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
 
@@ -97,51 +95,7 @@ class _UserManagementState extends State<UserManagement> {
         title: const Text("School facility"),
         backgroundColor: Colors.green,
       ),
-      drawer: Drawer(
-        width: 250,
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.green,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("School Facility",
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                  SizedBox(
-                    child: Image.asset("assets/img.png"),
-                  )
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_add_alt_1),
-              title: const Text('User Management'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_add_alt_1),
-              title: const Text('Log Out'),
-              onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
-              },
-            ),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () async{
