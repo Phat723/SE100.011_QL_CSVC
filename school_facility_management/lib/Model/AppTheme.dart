@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 
 class AppTheme {
   AppTheme._();
+  static AppTheme get instance => Get.find();
+  static  ThemeData lightTheme = ThemeData(
+     brightness: Brightness.light,
+     inputDecorationTheme: darkInputDecorationTheme,
+  );
+
 
   static const Color notWhite = Color(0xFFEDF0F2);
   static const Color nearlyWhite = Color(0xFFFEFEFE);
@@ -29,7 +37,8 @@ class AppTheme {
     caption: caption,
   );*/
 
-  static const TextStyle display1 = TextStyle( // h4 -> display1
+  static const TextStyle display1 = TextStyle(
+    // h4 -> display1
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 36,
@@ -38,7 +47,8 @@ class AppTheme {
     color: darkerText,
   );
 
-  static const TextStyle headline = TextStyle( // h5 -> headline
+  static const TextStyle headline = TextStyle(
+    // h5 -> headline
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 24,
@@ -46,7 +56,8 @@ class AppTheme {
     color: darkerText,
   );
 
-  static const TextStyle title = TextStyle( // h6 -> title
+  static const TextStyle title = TextStyle(
+    // h6 -> title
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 16,
@@ -54,7 +65,8 @@ class AppTheme {
     color: darkerText,
   );
 
-  static const TextStyle subtitle = TextStyle( // subtitle2 -> subtitle
+  static const TextStyle subtitle = TextStyle(
+    // subtitle2 -> subtitle
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 14,
@@ -62,7 +74,8 @@ class AppTheme {
     color: darkText,
   );
 
-  static const TextStyle body2 = TextStyle( // body1 -> body2
+  static const TextStyle body2 = TextStyle(
+    // body1 -> body2
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 14,
@@ -70,7 +83,8 @@ class AppTheme {
     color: darkText,
   );
 
-  static const TextStyle body1 = TextStyle( // body2 -> body1
+  static const TextStyle body1 = TextStyle(
+    // body2 -> body1
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 16,
@@ -78,12 +92,52 @@ class AppTheme {
     color: darkText,
   );
 
-  static const TextStyle caption = TextStyle( // Caption -> caption
+  static const TextStyle caption = TextStyle(
+    // Caption -> caption
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 12,
     letterSpacing: 0.2,
     color: lightText, // was lightText
   );
+
+ static InputDecorationTheme darkInputDecorationTheme =
+  InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+      prefixIconColor: Colors.black,
+      floatingLabelStyle: const TextStyle (color: AppTheme.darkText),
+      focusedBorder:  OutlineInputBorder(
+        borderSide: const BorderSide(width: 2.0),
+        borderRadius: BorderRadius.circular(50),
+      ),
+  );
+}
+
+
+
+class FormHeaderWidget extends StatelessWidget {
+  const FormHeaderWidget(
+      {Key? key,
+      required this.image,
+      required this.title,
+      required this.subtitle})
+      : super(key: key);
+
+  final String image, title, subtitle;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image(
+          image: AssetImage(image),
+          height: size.height * 0.2,
+        ),
+        Text(title, style: Theme.of(context).textTheme.displayMedium),
+        Text(subtitle, style: Theme.of(context).textTheme.labelMedium)
+      ],
+    );
+  }
 
 }

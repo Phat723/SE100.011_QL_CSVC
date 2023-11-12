@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
 
@@ -15,6 +18,7 @@ class _UserManagementState extends State<UserManagement> {
   var collection = FirebaseFirestore.instance.collection("Client");
   late List<Map<String, dynamic>> items;
   bool isLoaded = false;
+  late final AuthController authController;
 
   @override
   void initState() {
@@ -47,7 +51,8 @@ class _UserManagementState extends State<UserManagement> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
+                      Get.to(const UserInfoScreen());
                     },
                     shape: RoundedRectangleBorder(
                         side: const BorderSide(width: 2),
@@ -82,7 +87,6 @@ class _UserManagementState extends State<UserManagement> {
                           case 1:
                             break;
                         }
-
                       },
                     )
 
@@ -107,4 +111,5 @@ class _UserManagementState extends State<UserManagement> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+
 }

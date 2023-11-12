@@ -6,6 +6,7 @@ import 'package:school_facility_management/Screen/login_screen.dart';
 import '../Screen/navigator_home_screen.dart';
 
 class AuthController extends GetxController {
+  static AuthController get instance => Get.find();
   // sign up text editing controllers
 
   final TextEditingController emailController = TextEditingController();
@@ -15,7 +16,7 @@ class AuthController extends GetxController {
   final TextEditingController loginEmailController = TextEditingController();
   final TextEditingController loginPasswordController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> loginUser() async {
     final user = await _auth.signInWithEmailAndPassword(
@@ -28,10 +29,11 @@ class AuthController extends GetxController {
       Get.to(const NavigatorHomeScreen());
   }
 
-  Future<void> logoutUser() async {
-    await _auth.signOut();
+  static Future<void> logoutUser() async {
+    await FirebaseAuth.instance.signOut();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     Get.offAll(const LoginScreen());
   }
+
 }

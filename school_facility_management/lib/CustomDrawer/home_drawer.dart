@@ -171,7 +171,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ),
                 onTap: (
                     ) {
-                  authController.logoutUser();
+                  AuthController.logoutUser();
                   Get.offAll(const LoginScreen());
                 },
               ),

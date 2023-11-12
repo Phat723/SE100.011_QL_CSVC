@@ -7,3 +7,13 @@ class Assets {
   static const String assetsUserDefaultAvatar = 'assets/UserDefaultAvatar.png';
 
 }
+
+const tFullName ='Full Name';
+const tEmail ='Email';
+const tPhone = 'Phone Number';
+const tPass ='Password';
+const tConfirm ='Confirm';
+
+const tDefaultSize = 30.0;
+const tFormHeight = 30.0;
+

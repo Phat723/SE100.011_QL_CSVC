@@ -84,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: authController.loginPasswordController,
+                  obscureText: true,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
