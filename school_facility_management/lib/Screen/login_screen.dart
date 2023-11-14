@@ -58,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextFormField(
+
                   controller: authController.loginEmailController,
                   style: const TextStyle(
                     fontSize: 18,

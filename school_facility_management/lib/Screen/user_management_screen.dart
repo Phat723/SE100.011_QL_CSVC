@@ -50,9 +50,9 @@ class _UserManagementState extends State<UserManagement> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
-                    onTap: (){
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
-                      Get.to(const UserInfoScreen());
+                    onTap: ()async{
+                     var myUser= await AuthController.getUserDetail(items[index]["Id"]);
+                      Get.to(const UserInfoScreen(),arguments:[myUser]);
                     },
                     shape: RoundedRectangleBorder(
                         side: const BorderSide(width: 2),

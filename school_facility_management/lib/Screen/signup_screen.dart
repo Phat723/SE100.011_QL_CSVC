@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:school_facility_management/Firebase/firebase_auth_services.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
@@ -21,7 +22,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController birthDayController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
   String selectedRole = "Admin";
+  String selectedGender ="Male";
   late DateTime selectedDate = DateTime.now();
   bool isVisible = false;
 
@@ -103,6 +107,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: InputDecoration(
                     hintText: "Email",
                     prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color: Colors.grey.shade600,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: phoneController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Phone number is required";
+                    }
+                    return null;
+                  },
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Phone number",
+                    prefixIcon: const Icon(Icons.phone, color: Colors.grey),
                     hintStyle: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 15,
@@ -220,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 55,
                       width: 100,
                       padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadiusDirectional.circular(10),
@@ -248,14 +283,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(width: 20,),
                     SizedBox(
-                      width: 150,
+                      width: 120,
                       child: TextFormField(
                         controller: birthDayController,
                         readOnly: true,
                         onTap: () {
                           showDatePicker(
                             context: context,
-                            initialDate: selectedDate ?? DateTime.now(),
+                            initialDate: selectedDate = DateTime.now(),
                             firstDate: DateTime(1900),
                             lastDate: DateTime(2100),
                           ).then((pickedDate) {
@@ -263,13 +298,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               setState(() {
                                 selectedDate = pickedDate;
                                 birthDayController.text =
-                                    DateFormat('dd/MM/yyyy').format(selectedDate!);
+                                    DateFormat('dd/MM/yyyy').format(selectedDate);
                               });
                             }
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: 'Birh day',
+                          labelText: 'Birthday',
                           suffixIcon: const Icon(Icons.calendar_today),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -283,7 +318,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       ),
                     ),
+                    const SizedBox(width: 20,),
+
+                    Container(
+                      height: 55,
+                      width: 100,
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadiusDirectional.circular(10),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: DropdownButton<String>(
+                        hint:  Text(selectedGender),
+                        isExpanded: true,
+                        items: const [
+                          DropdownMenuItem(
+                            value: "Male",
+                            child: Text("Male"),
+                          ),
+                          DropdownMenuItem(
+                            value: "Female",
+                            child: Text("Female"),
+                          )
+                        ],
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedGender = value!;
+                          });
+                        },
+                      ),
+                    ),
                   ],
+
                 ),
                 const SizedBox(height: 20,),
                 SizedBox(
@@ -303,19 +371,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
   void _signUp() async {
-    final myDB = FirebaseFirestore.instance.collection("Client").doc();
+
     String username = usernameController.text;
     String email = emailController.text;
     String password = passwordController.text;
     String role = selectedRole;
     String birthDay = birthDayController.text;
+    String gender = selectedGender;
+    String phone = phoneController.text;
     User? user = await _auth.signUpWithEmailAndPassword(email, password);
+    final myDB = FirebaseFirestore.instance.collection("Client").doc( user?.uid);
     if (user != null) {
       String? id = myDB.id;
-      //MyUser myUser = MyUser(id: id, username: username, email: email, role: role);
-      //myDB.set(myUser.toMap());
+
+      MyUser myUser = MyUser(
+          id: id,
+          username: username,
+          password: password,
+          birthDay: birthDay,
+          gender: gender,
+          phoneNum: phone,
+          email: email,
+          role: role
+      );
+     myDB.set(myUser.toMap()).whenComplete(() => Get.snackbar('School facility','Successfully Added'));
       if(context.mounted) {
         Navigator.pop(context);
       }

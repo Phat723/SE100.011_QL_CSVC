@@ -105,6 +105,7 @@ class AppTheme {
   InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
       prefixIconColor: Colors.black,
+
       floatingLabelStyle: const TextStyle (color: AppTheme.darkText),
       focusedBorder:  OutlineInputBorder(
         borderSide: const BorderSide(width: 2.0),

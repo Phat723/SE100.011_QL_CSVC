@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MyUser {
   final String? id;
   final String username;
@@ -16,21 +18,34 @@ class MyUser {
     required this.birthDay,
     required this.gender,
     required this.phoneNum,
-    required this.state,
     required this.email,
-    required this.role
+    required this.role,
+    this.state='enable',
   });
   Map<String, dynamic> toMap(){
     return {
-      "id": id,
+      "Id": id,
       "Username": username,
       "Password": password,
       "BirthDay": birthDay,
       "Gender": gender,
-      "PhoneNum": phoneNum,
+      "PhoneNumber": phoneNum,
       "State": state,
       "Email": email,
       "Role": role
     };
+  }
+  factory MyUser.fromSnapShot( DocumentSnapshot<Map<String, dynamic>>document){
+    return MyUser(
+      id: document["Id"],
+      username: document["Username"],
+      password: document["Password"],
+      birthDay: document["BirthDay"],
+      gender: document["Gender"],
+      phoneNum: document["PhoneNumber"],
+      email: document["Email"],
+      role: document["Role"],
+      state: document["State"],
+    );
   }
 }
