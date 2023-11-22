@@ -10,7 +10,7 @@ class DeviceDetail {
   const DeviceDetail({
     required this.deviceDetailId,
     required this.areaId,
-    required this.roomId,
+    this.roomId = "",
     required this.storeCode,
     required this.deviceDetailName,
     required this.deviceStatus,

@@ -82,7 +82,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                         padding: const EdgeInsets.all(8.0),
                         child: InkWell(
                           onTap: () async{
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => DeviceManagement(dvTypeName: items[index]["DeviceType Name"])));
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => DeviceManagement(dvTypeName: items[index]["DeviceType Name"], db: db,)));
                               loadDeviceType();
                           },
                           child: Container(
@@ -193,7 +193,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('Add new item'),
+          title: const Text('Add New Device Type'),
           content: TextFormField(
             controller: deviceTypeNameController,
             decoration: const InputDecoration(hintText: 'Enter item name'),

@@ -13,6 +13,7 @@ void main() async{
  // runApp(const MyApp());
   Get.testMode= true;
   runApp ( GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const LoginScreen()));
   _init();
@@ -33,8 +34,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-
       home:LoginScreen(),
       title: "School Facility App",
     );

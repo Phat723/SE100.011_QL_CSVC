@@ -1,35 +1,35 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:school_facility_management/Screen/device_detail_management.dart';
 import 'package:school_facility_management/Screen/home_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import 'package:school_facility_management/UserModel/devices_model.dart';
-import 'package:school_facility_management/my_button.dart';
 
 class DeviceManagement extends StatefulWidget {
-  final String dvTypeName; //lấy doc id của item
-  const DeviceManagement({super.key, required this.dvTypeName});
+  final String dvTypeName;
+  final CollectionReference db;
+  const DeviceManagement({super.key, required this.dvTypeName, required this.db});
 
   @override
   State<DeviceManagement> createState() => _DeviceManagementState();
 }
 
 class _DeviceManagementState extends State<DeviceManagement> {
+  late final DocumentReference db;
   final deviceNameController = TextEditingController();
   final deviceDescriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String receiveDeviceName = '';
+
+
   late List<Map<String, dynamic>> deviceItems;
   bool isLoad = false;
 
-
-
   void loadDevice() async {
-    final db = FirebaseFirestore.instance
-        .collection("DevicesType")
-        .doc("${receiveDeviceName}Type_id")
-        .collection("Devices");
     List<Map<String, dynamic>> tempList = [];
-    var data = await db.get();
+    final deviceDb = db.collection("Devices");
+    var data = await deviceDb.get();
     for (var element in data.docs) {
       tempList.add(element.data());
     }
@@ -42,6 +42,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
   void initState() {
     setState(() {
       receiveDeviceName = widget.dvTypeName;
+      db = widget.db.doc("${receiveDeviceName}Type_id");
     });
     loadDevice();
     super.initState();
@@ -64,7 +65,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
                   onTap: (){
-                    //Navigator.push(context, MaterialPageRoute(builder: (context) => UserInfoScreen(id: items[index]["id"])));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DeviceDetailManagement(db: db,deviceName: deviceItems[index]["Device Name"],)));
                   },
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(width: 2),
@@ -75,10 +76,10 @@ class _DeviceManagementState extends State<DeviceManagement> {
                   ),
                   title: Row(
                     children: [
-                      Text(deviceItems[index]["Devices Name"] ?? "Not given"),
+                      Text(deviceItems[index]["Device Name"] ?? "Not given"),
                     ],
                   ),
-                  subtitle: Text(deviceItems[index]["Devices Amount"]??"Not given"),
+                  subtitle: Text(deviceItems[index]["Device Amount"].toString()),
                   trailing: const Icon(Icons.more_vert),
                 ),
               );
@@ -216,7 +217,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
             },
           );
         },
-        child: const Icon(Icons.person_add_alt_1),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
@@ -225,7 +226,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
     if(receiveDeviceName != ''){
       String deviceName = deviceNameController.text;
       String deviceDescription = deviceDescriptionController.text;
-      String deviceId = "${deviceName}_id";
+      String deviceId = "${deviceName}Device_id";
       Device myDevice = Device(deviceId: deviceId, deviceName: deviceName, description: deviceDescription);
       final db = FirebaseFirestore.instance
           .collection("DevicesType")
