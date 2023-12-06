@@ -17,18 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: const Center(),
-      appBar: AppBar(
-        title: const Text("School facility"),
-        backgroundColor: Colors.green,
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () async{
-        },
-        child: const Icon(Icons.person_add_alt_1),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      appBar: AppBar(),
     );
   }
 }

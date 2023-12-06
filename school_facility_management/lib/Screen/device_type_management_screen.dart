@@ -46,7 +46,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: Center(
           child: isLoad
               ? GridView.builder(
                   itemCount: items.length + 1,
@@ -55,9 +55,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                   itemBuilder: (context, index) {
                     if (index == items.length) {
                       return GestureDetector(
-                        onTap: () {
-                          addDeviceType();
-                        },
+                        onTap: () => addDeviceType(),
                         child: Padding(
                           padding: const EdgeInsets.all(50.0),
                           child: Container(
@@ -85,6 +83,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                               await Navigator.push(context, MaterialPageRoute(builder: (context) => DeviceManagement(dvTypeName: items[index]["DeviceType Name"], db: db,)));
                               loadDeviceType();
                           },
+                          onLongPress: () => showDeleteDialog("${items[index]["DeviceType Name"]}Type_id", index),
                           child: Container(
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
@@ -117,9 +116,10 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                Image.asset("assets/img.png"),
+                                Image.asset("assets/facilities_icon.png"),
+                                const SizedBox(height: 10,),
                                 Text(
-                                  items[index]["DeviceType Amount"].toString(),
+                                  "Số lượng: ${items[index]["DeviceType Amount"]}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -133,8 +133,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                       );
                     }
                   },
-                )
-              : const Text("No data")),
+                ) : const CircularProgressIndicator()),
       appBar: AppBar(
         title: const Text("School facility"),
         backgroundColor: Colors.green,
@@ -218,6 +217,35 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                 Navigator.of(context).pop();
                 deviceTypeNameController.clear();
               },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void showDeleteDialog(String id, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Xác nhận xóa"),
+          content: const Text("Bạn có chắc muốn xóa loại thiết bị này"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Xóa dữ liệu từ Firebase
+                db.doc(id).delete();
+                // Cập nhật lại danh sách và rebuild widget
+                setState(() {
+                  items.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text("Delete"),
             ),
           ],
         );

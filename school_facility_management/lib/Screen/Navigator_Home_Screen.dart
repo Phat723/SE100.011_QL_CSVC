@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_facility_management/Screen/device_management_screen.dart';
 import 'package:school_facility_management/Screen/device_type_management_screen.dart';
+import 'package:school_facility_management/Screen/in_out_management.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import '../CustomDrawer/drawer_user_controller.dart';
 import '../CustomDrawer/home_drawer.dart';
@@ -68,7 +69,9 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
           });
           break;
         case DrawerIndex.Invite:
-          setState(() {});
+          setState(() {
+            screenView = const IoManagement();
+          });
           break;
         default:
           break;

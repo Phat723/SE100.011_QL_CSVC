@@ -1,15 +1,14 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:school_facility_management/Screen/device_detail_management.dart';
-import 'package:school_facility_management/Screen/home_screen.dart';
-import 'package:school_facility_management/Screen/user_management_screen.dart';
 import 'package:school_facility_management/UserModel/devices_model.dart';
 
 class DeviceManagement extends StatefulWidget {
   final String dvTypeName;
   final CollectionReference db;
-  const DeviceManagement({super.key, required this.dvTypeName, required this.db});
+
+  const DeviceManagement(
+      {super.key, required this.dvTypeName, required this.db});
 
   @override
   State<DeviceManagement> createState() => _DeviceManagementState();
@@ -21,7 +20,6 @@ class _DeviceManagementState extends State<DeviceManagement> {
   final deviceDescriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String receiveDeviceName = '';
-
 
   late List<Map<String, dynamic>> deviceItems;
   bool isLoad = false;
@@ -38,6 +36,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
       isLoad = true;
     });
   }
+
   @override
   void initState() {
     setState(() {
@@ -47,93 +46,62 @@ class _DeviceManagementState extends State<DeviceManagement> {
     loadDevice();
     super.initState();
   }
+
   @override
   void dispose() {
     deviceDescriptionController.dispose();
     deviceNameController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: isLoad
             ? ListView.builder(
-            itemCount: deviceItems.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => DeviceDetailManagement(db: db,deviceName: deviceItems[index]["Device Name"],)));
-                  },
-                  shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 2),
-                      borderRadius: BorderRadius.circular(20)),
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Icon(Icons.person),
-                  ),
-                  title: Row(
-                    children: [
-                      Text(deviceItems[index]["Device Name"] ?? "Not given"),
-                    ],
-                  ),
-                  subtitle: Text(deviceItems[index]["Device Amount"].toString()),
-                  trailing: const Icon(Icons.more_vert),
-                ),
-              );
-            })
-            : const Text("No data"),
-      ),
-      appBar: AppBar(
-        title: const Text("School facility"),
-        backgroundColor: Colors.green,
-      ),
-      drawer: Drawer(
-        width: 250,
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.green,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("School Facility",
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                  SizedBox(
-                    child: Image.asset("assets/img.png"),
-                  )
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HomeScreen()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.manage_accounts),
-              title: const Text('User Management'),
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const UserManagement()));
-              },
-            ),
-          ],
-        ),
+                itemCount: deviceItems.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.black12),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DeviceDetailManagement(
+                                        db: db,
+                                        deviceName: deviceItems[index]
+                                            ["Device Name"],
+                                      )));
+                        },
+                        title: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(deviceItems[index]["Device Name"] ?? "Not given",
+                                  style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        trailing: Text(
+                          "Số lượng: ${deviceItems[index]["Device Amount"]}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  );
+                })
+            : const CircularProgressIndicator(),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -142,7 +110,8 @@ class _DeviceManagementState extends State<DeviceManagement> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
                 title: const Text('Input Devices Information'),
                 content: Form(
                   key: _formKey,
@@ -152,9 +121,9 @@ class _DeviceManagementState extends State<DeviceManagement> {
                       TextFormField(
                         controller: deviceNameController,
                         validator: (value) {
-                          if(value!.isEmpty){
+                          if (value!.isEmpty) {
                             return "Require Device Name";
-                          }else{
+                          } else {
                             return null;
                           }
                         },
@@ -222,17 +191,22 @@ class _DeviceManagementState extends State<DeviceManagement> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-  void addDevice() async{
-    if(receiveDeviceName != ''){
+
+  void addDevice() async {
+    if (receiveDeviceName != '') {
       String deviceName = deviceNameController.text;
       String deviceDescription = deviceDescriptionController.text;
       String deviceId = "${deviceName}Device_id";
-      Device myDevice = Device(deviceId: deviceId, deviceName: deviceName, description: deviceDescription);
+      Device myDevice = Device(
+          deviceId: deviceId,
+          deviceName: deviceName,
+          description: deviceDescription);
       final db = FirebaseFirestore.instance
           .collection("DevicesType")
           .doc("${receiveDeviceName}Type_id");
       db.collection("Devices").doc(deviceId).set(myDevice.toMap());
-      var count = await db.collection("Devices").get().then((value) => value.size);
+      var count =
+          await db.collection("Devices").get().then((value) => value.size);
       db.update({"DeviceType Amount": count});
     }
   }

@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,23 +9,22 @@ class DeviceDetailController extends GetxController {
   final TextEditingController storeCodeController = TextEditingController();
   final TextEditingController deviceDetailNameController = TextEditingController();
   final TextEditingController deviceOwnerController = TextEditingController();
+  String caseValue = 'Mua mới';
+  List<String> caseItems = ['Mua mới', 'Tài trợ'];
   RxBool isState = true.obs;
   RxString areaId = ''.obs;
   RxString roomId = ''.obs;
-
-  Future<void> getFirstDocumentId() async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('Area')
-          .limit(1) // Giới hạn số lượng tài liệu trả về là 1
-          .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        areaId.value = querySnapshot.docs.first.id;
-      } else {
-        print('Không có tài liệu trong collection.');
-      }
-    } catch (e) {
-      print('Lỗi: $e');
-    }
+  String generateInOutId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random();
+    return String.fromCharCodes(Iterable.generate(
+        15, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+  }
+  void clearData(){
+    deviceOwnerController.clear();
+    deviceDetailNameController.clear();
+    storeCodeController.clear();
+    areaId.value = '';
+    roomId.value = '';
   }
 }
