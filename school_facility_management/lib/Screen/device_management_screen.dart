@@ -1,49 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:school_facility_management/Screen/device_detail_management.dart';
 import 'package:school_facility_management/UserModel/devices_model.dart';
 
-class DeviceManagement extends StatefulWidget {
-  final String dvTypeName;
-  final CollectionReference db;
+import '../UserModel/devices_type_model.dart';
 
-  const DeviceManagement(
-      {super.key, required this.dvTypeName, required this.db});
+class DeviceManagement extends StatefulWidget {
+  final DeviceType dvType;
+
+  const DeviceManagement({super.key, required this.dvType});
 
   @override
   State<DeviceManagement> createState() => _DeviceManagementState();
 }
 
 class _DeviceManagementState extends State<DeviceManagement> {
-  late final DocumentReference db;
+  DocumentReference? db;
   final deviceNameController = TextEditingController();
   final deviceDescriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String receiveDeviceName = '';
-
-  late List<Map<String, dynamic>> deviceItems;
-  bool isLoad = false;
-
-  void loadDevice() async {
-    List<Map<String, dynamic>> tempList = [];
-    final deviceDb = db.collection("Devices");
-    var data = await deviceDb.get();
-    for (var element in data.docs) {
-      tempList.add(element.data());
-    }
-    setState(() {
-      deviceItems = tempList;
-      isLoad = true;
-    });
-  }
+  DeviceType? receivedDvType;
+  List<Device> deviceItems = [];
 
   @override
   void initState() {
-    setState(() {
-      receiveDeviceName = widget.dvTypeName;
-      db = widget.db.doc("${receiveDeviceName}Type_id");
-    });
-    loadDevice();
+    receivedDvType = widget.dvType;
+    db = FirebaseFirestore.instance
+        .collection("DevicesType")
+        .doc(receivedDvType!.deviceTypeId);
     super.initState();
   }
 
@@ -57,51 +42,89 @@ class _DeviceManagementState extends State<DeviceManagement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: isLoad
-            ? ListView.builder(
-                itemCount: deviceItems.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(10),
+      appBar: AppBar(title: const Text("Device management"),centerTitle: true,),
+      body: SafeArea(
+        child: Column(
+          children: [
+            StreamBuilder<QuerySnapshot>(
+              stream: db!.collection("Devices").snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text("something went wrong");
+                }
+                if (snapshot.hasData && deviceItems.isEmpty) {
+                  deviceItems.clear();
+                  for (var data in snapshot.data!.docs) {
+                    deviceItems.add(Device.fromSnapshot(data));
+                  }
+                }
+                upDateAmount(deviceItems);
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: deviceItems.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.black12),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DeviceDetailManagement(
+                                        device: deviceItems[index])));
+                          },
+                          title: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    deviceItems[index].deviceName ?? "Not given",
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                          trailing: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection("DevicesType")
+                                .doc(deviceItems[index].deviceTypeId)
+                                .collection("Devices")
+                                .doc(deviceItems[index].deviceId)
+                                .collection("Device Detail").snapshots(),
+                            builder: (context, snapshot) {
+                              if(snapshot.hasData){
+                                deviceItems[index].deviceAmount = snapshot.data!.size ?? 0;
+                                FirebaseFirestore.instance
+                                    .collection("DevicesType")
+                                    .doc(deviceItems[index].deviceTypeId)
+                                    .collection("Devices")
+                                    .doc(deviceItems[index].deviceId).update(deviceItems[index].toMap());
+                              }
+                              return Text(
+                                "Số lượng: ${deviceItems[index].deviceAmount}",
+                                style: const TextStyle(color: Colors.white),
+                              );
+                            }
+                          ),
+                        ),
                       ),
-                      child: ListTile(
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.black12),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DeviceDetailManagement(
-                                        db: db,
-                                        deviceName: deviceItems[index]
-                                            ["Device Name"],
-                                      )));
-                        },
-                        title: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(deviceItems[index]["Device Name"] ?? "Not given",
-                                  style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-                            ),
-                          ],
-                        ),
-                        trailing: Text(
-                          "Số lượng: ${deviceItems[index]["Device Amount"]}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  );
-                })
-            : const CircularProgressIndicator(),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -174,9 +197,9 @@ class _DeviceManagementState extends State<DeviceManagement> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         addDevice();
+                        deviceItems.clear();
                         deviceNameController.clear();
                         deviceDescriptionController.clear();
-                        loadDevice();
                         Navigator.of(context).pop();
                       }
                     },
@@ -192,22 +215,43 @@ class _DeviceManagementState extends State<DeviceManagement> {
     );
   }
 
+  void upDateAmount(List<Device> listDv) async {
+    for (int i = 0; i < listDv.length; i++) {
+      int count = 0;
+      await FirebaseFirestore.instance
+          .collection("DevicesType")
+          .doc(listDv[i].deviceTypeId)
+          .collection("Devices")
+          .doc(listDv[i].deviceId)
+          .collection("Device Detail")
+          .get()
+          .then((value) {
+        count = value.size;
+      });
+      listDv[i].deviceAmount = count;
+      await FirebaseFirestore.instance
+          .collection("DevicesType")
+          .doc(listDv[i].deviceTypeId)
+          .collection("Devices")
+          .doc(listDv[i].deviceId)
+          .update({"Device Amount": count});
+    }
+  }
+
   void addDevice() async {
-    if (receiveDeviceName != '') {
+    if (receivedDvType!.deviceTypeId.isNotEmpty) {
       String deviceName = deviceNameController.text;
       String deviceDescription = deviceDescriptionController.text;
       String deviceId = "${deviceName}Device_id";
       Device myDevice = Device(
           deviceId: deviceId,
           deviceName: deviceName,
-          description: deviceDescription);
+          description: deviceDescription,
+          deviceTypeId: receivedDvType!.deviceTypeId);
       final db = FirebaseFirestore.instance
           .collection("DevicesType")
-          .doc("${receiveDeviceName}Type_id");
+          .doc(receivedDvType!.deviceTypeId);
       db.collection("Devices").doc(deviceId).set(myDevice.toMap());
-      var count =
-          await db.collection("Devices").get().then((value) => value.size);
-      db.update({"DeviceType Amount": count});
     }
   }
 }

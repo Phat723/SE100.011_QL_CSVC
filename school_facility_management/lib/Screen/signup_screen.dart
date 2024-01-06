@@ -249,110 +249,111 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-
-                  children: [
-                    Container(
-                      height: 55,
-                      width: 100,
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadiusDirectional.circular(10),
-                        border: Border.all(color: Colors.black12),
-                      ),
-                      child: DropdownButton<String>(
-                        hint: Text(selectedRole),
-                        isExpanded: true,
-                        items: const [
-                          DropdownMenuItem(
-                            value: "Admin",
-                            child: Text("Admin"),
-                          ),
-                          DropdownMenuItem(
-                            value: "User",
-                            child: Text("User"),
-                          )
-                        ],
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectedRole = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 20,),
-                    SizedBox(
-                      width: 120,
-                      child: TextFormField(
-                        controller: birthDayController,
-                        readOnly: true,
-                        onTap: () {
-                          showDatePicker(
-                            context: context,
-                            initialDate: selectedDate = DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(2100),
-                          ).then((pickedDate) {
-                            if (pickedDate != null) {
-                              setState(() {
-                                selectedDate = pickedDate;
-                                birthDayController.text =
-                                    DateFormat('dd/MM/yyyy').format(selectedDate);
-                              });
-                            }
-                          });
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Birthday',
-                          suffixIcon: const Icon(Icons.calendar_today),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.black12),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.black12),
-                          ),
+                SizedBox(
+                  width: context.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 55,
+                        width: 100,
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadiusDirectional.circular(10),
+                          border: Border.all(color: Colors.black12),
                         ),
-
+                        child: DropdownButton<String>(
+                          hint: Text(selectedRole),
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(
+                              value: "Admin",
+                              child: Text("Admin"),
+                            ),
+                            DropdownMenuItem(
+                              value: "User",
+                              child: Text("User"),
+                            )
+                          ],
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedRole = value!;
+                            });
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 20,),
-
-                    Container(
-                      height: 55,
-                      width: 100,
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadiusDirectional.circular(10),
-                        border: Border.all(color: Colors.black12),
-                      ),
-                      child: DropdownButton<String>(
-                        hint:  Text(selectedGender),
-                        isExpanded: true,
-                        items: const [
-                          DropdownMenuItem(
-                            value: "Male",
-                            child: Text("Male"),
+                      SizedBox(
+                        height: 55,
+                        width: 120,
+                        child: TextFormField(
+                          controller: birthDayController,
+                          readOnly: true,
+                          onTap: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: selectedDate = DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime(2100),
+                            ).then((pickedDate) {
+                              if (pickedDate != null) {
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                  birthDayController.text =
+                                      DateFormat('dd/MM/yyyy').format(selectedDate);
+                                });
+                              }
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Birthday',
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.black12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.black12),
+                            ),
                           ),
-                          DropdownMenuItem(
-                            value: "Female",
-                            child: Text("Female"),
-                          )
-                        ],
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectedGender = value!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
 
+                        ),
+                      ),
+                      Container(
+                        height: 55,
+                        width: 100,
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadiusDirectional.circular(10),
+                          border: Border.all(color: Colors.black12),
+                        ),
+                        child: DropdownButton<String>(
+                          hint:  Text(selectedGender),
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(
+                              value: "Male",
+                              child: Text("Male"),
+                            ),
+                            DropdownMenuItem(
+                              value: "Female",
+                              child: Text("Female"),
+                            )
+                          ],
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedGender = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20,),
                 SizedBox(

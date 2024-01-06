@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_facility_management/my_button.dart';
 import '../Controllers/Auth_Controllers.dart';
+import 'Navigator_Home_Screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -117,8 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   child: MyButton(
                     onPressed: () {
-                    //  _signIn();
                       authController.loginUser();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NavigatorHomeScreen()));
                     },
                     text: "Đăng nhập",
                   ),
@@ -130,19 +131,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-//   void _signIn() async{
-//     String email = authController.loginEmailController.text;
-//     String password = authController.loginPasswordController.text;
-//     User? user =await _auth.signInWithEmailAndPassword(email, password);
-//     if(user != null){
-//       print("User is successfully created");
-// /*
-//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-// */
-//     Get.offAll(const NavigatorHomeScreen());
-//     }
-//     else{
-//       print("Some error happen");
-//     }
-//   }
 }

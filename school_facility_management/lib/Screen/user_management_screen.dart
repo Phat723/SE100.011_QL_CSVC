@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
@@ -29,9 +28,9 @@ class _UserManagementState extends State<UserManagement> {
   void loadUsers() async {
     List<Map<String, dynamic>> tempList = [];
     var data = await collection.get();
-    data.docs.forEach((element) {
+    for (var element in data.docs) {
       tempList.add(element.data());
-    });
+    }
     setState(() {
       items = tempList;
       items.sort((a, b) => a["Username"].compareTo(b["Username"]));
@@ -97,7 +96,7 @@ class _UserManagementState extends State<UserManagement> {
       ),
       appBar: AppBar(
         title: const Text("School facility"),
-        backgroundColor: Colors.green,
+        centerTitle: true,
       ),
 
       floatingActionButton: FloatingActionButton(

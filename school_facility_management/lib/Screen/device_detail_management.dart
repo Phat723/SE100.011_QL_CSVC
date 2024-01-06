@@ -1,53 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
 import 'package:school_facility_management/Controllers/InOut_Controller.dart';
+import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Screen/add_device_detail_screen.dart';
 import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 
-class DeviceDetailManagement extends StatefulWidget {
-  final DocumentReference db;
-  final String deviceName;
+import '../UserModel/devices_model.dart';
 
-  const DeviceDetailManagement(
-      {super.key, required this.db, required this.deviceName});
+class DeviceDetailManagement extends StatefulWidget {
+  final Device device;
+
+  const DeviceDetailManagement({super.key, required this.device});
 
   @override
   State<DeviceDetailManagement> createState() => _DeviceDetailManagementState();
 }
 
 class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
-  late final DocumentReference dvDetailDb;
-  late List<Map<String, dynamic>> deviceDetailItems;
+  DocumentReference? dvDetailDb;
+  List<DeviceDetail> deviceDetailItems = [];
   InOutController inOutController = Get.put(InOutController());
   DeviceDetailController detailController = Get.put(DeviceDetailController());
-  String receiveDeviceName = '';
+  RoomController roomController = Get.put(RoomController());
+  Device? receivedDevice;
   bool isLoaded = false;
 
   @override
   void initState() {
-    setState(() {
-      receiveDeviceName = widget.deviceName;
-      dvDetailDb =
-          widget.db.collection("Devices").doc("${receiveDeviceName}Device_id");
-    });
-    loadDeviceDetail();
+    receivedDevice = widget.device;
+    dvDetailDb = FirebaseFirestore.instance
+        .collection("DevicesType")
+        .doc(receivedDevice!.deviceTypeId)
+        .collection("Devices")
+        .doc(receivedDevice!.deviceId);
     super.initState();
-  }
-
-  void loadDeviceDetail() async {
-    final db = dvDetailDb.collection("Device Detail");
-    List<Map<String, dynamic>> tempList = [];
-    var data = await db.get();
-    for (var element in data.docs) {
-      tempList.add(element.data());
-    }
-    setState(() {
-      deviceDetailItems = tempList;
-      isLoaded = true;
-    });
   }
 
   @override
@@ -55,35 +43,45 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: isLoaded
-              ? ListView.builder(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: dvDetailDb!.collection("Device Detail").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+              if (snapshot.hasData) {
+                deviceDetailItems.clear();
+                for (var data in snapshot.data!.docs) {
+                  deviceDetailItems.add(DeviceDetail.fromSnapshot(data));
+                }
+                return ListView.builder(
                   itemCount: deviceDetailItems.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         onLongPress: () {
-                          deleteDeviceDetail(index,
-                              deviceDetailItems[index]['DeviceDetail Id']);
+                          deleteDeviceDetail(deviceDetailItems[index].toMap());
                         },
                         shape: RoundedRectangleBorder(
                             side: const BorderSide(width: 2),
                             borderRadius: BorderRadius.circular(20)),
                         title: Row(
                           children: [
-                            Text(deviceDetailItems[index]
-                                    ["DeviceDetail Name"] ??
+                            Text(deviceDetailItems[index].deviceDetailName ??
                                 "Not given"),
                           ],
                         ),
-                        subtitle: Text(
-                            deviceDetailItems[index]["DeviceDetail Status"]),
+                        subtitle: Text(deviceDetailItems[index].deviceStatus),
                         trailing: const Icon(Icons.more_vert),
                       ),
                     );
                   },
-                )
-              : const CircularProgressIndicator(),
+                );
+              }
+              return const CircularProgressIndicator();
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -98,41 +96,43 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
     );
   }
 
-  void addDeviceDetail() async{
-    if (receiveDeviceName.isNotEmpty) {
-      DeviceDetailController dv = Get.put(DeviceDetailController());
-      InOutController ioController = Get.put(InOutController());
+  void addDeviceDetail() async {
+    if(receivedDevice!.deviceTypeId.isNotEmpty && receivedDevice!.deviceId.isNotEmpty) {
       DeviceDetail myDeviceDetail = DeviceDetail(
-          deviceDetailId: "${dv.deviceDetailNameController.text}_detail_id",
-          roomId: dv.roomId.value,
-          areaId: dv.areaId.value,
-          storeCode: dv.storeCodeController.text,
-          deviceDetailName: dv.deviceDetailNameController.text,
-          deviceStatus: dv.isState.value ? "Enable" : "Disable",
-          deviceOwner: dv.deviceOwnerController.text);
-      if (dv.deviceDetailNameController.text != '') {
-        final db = dvDetailDb
-            .collection("Device Detail")
-            .doc("${dv.deviceDetailNameController.text}_detail_id");
+          deviceDetailId:
+          "${detailController.deviceDetailNameController.text}_detail_id",
+          roomId: detailController.roomId.value,
+          areaId: detailController.areaId.value,
+          storeCode: detailController.storeCodeController.text,
+          deviceDetailName: detailController.deviceDetailNameController.text,
+          deviceStatus: detailController.isState.value ? "Enable" : "Disable",
+          deviceOwner: detailController.deviceOwnerController.text,
+          deviceId: receivedDevice!.deviceId,
+          deviceTypeId: receivedDevice!.deviceTypeId);
+      if (detailController.deviceDetailNameController.text != '') {
+        final db = dvDetailDb!.collection("Device Detail").doc(
+            "${detailController.deviceDetailNameController.text}_detail_id");
         await db.set(myDeviceDetail.toMap());
-        upDateAmount();
-        loadDeviceDetail();
-        ioController.generateInputSlip(dv.storeCodeController.text, dv.caseValue);
+        inOutController.generateInputSlip(
+            detailController.storeCodeController.text,
+            detailController.caseValue);
+        roomController.addDeviceToRoom(
+            detailController.areaId.value,
+            detailController.roomId.value,
+            myDeviceDetail.toMap());
         detailController.clearData();
       }
     }
   }
-  void upDateAmount() async{
-    var newAmount = await dvDetailDb.collection("Device Detail").get().then((value) => value.size);
-    dvDetailDb.update({'Device Amount': newAmount});
-  }
-  deleteDeviceDetail(int index, String id) {
+  deleteDeviceDetail(Map<String, dynamic> deletedDevice) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),side: const BorderSide(color: Colors.black, width: 2.0)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Colors.black, width: 2.0)),
           elevation: 2,
           title: const Text('Delete'),
           content: StatefulBuilder(
@@ -140,7 +140,8 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Please Chose Delete Option",textAlign: TextAlign.start),
+                const Text("Please Chose Delete Option",
+                    textAlign: TextAlign.start),
                 DropdownButton<String>(
                   isExpanded: true,
                   value: inOutController.deleteChoseCase,
@@ -167,9 +168,16 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
                 String deleteCode = detailController.generateInOutId();
                 inOutController.generateOutputSlip(
                     deleteCode, inOutController.deleteChoseCase);
-                dvDetailDb.collection("Device Detail").doc(id).delete();
+                dvDetailDb!
+                    .collection("Device Detail")
+                    .doc(deletedDevice["DeviceDetail Id"])
+                    .delete();
                 setState(() {
-                  deviceDetailItems.removeAt(index);
+                  deviceDetailItems.remove(deletedDevice);
+                  roomController.deleteDeviceFromRoom(
+                      deletedDevice["AreaId"],
+                      deletedDevice["RoomId"],
+                      deletedDevice["DeviceDetail Name"]);
                 });
                 Navigator.of(context).pop();
               },

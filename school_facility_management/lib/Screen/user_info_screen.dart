@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:school_facility_management/Controllers/User_Profile_Controllers.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
 import '../generated/assets.dart';

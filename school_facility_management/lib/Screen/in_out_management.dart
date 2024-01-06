@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
-import 'package:school_facility_management/Screen/area_manament_screen.dart';
 import 'package:school_facility_management/Screen/create_input_slip.dart';
+import 'package:school_facility_management/Screen/create_output_slip.dart';
+import 'package:school_facility_management/UserModel/in_out_log_model.dart';
 
 class IoManagement extends StatefulWidget {
   const IoManagement({super.key});
@@ -13,27 +14,8 @@ class IoManagement extends StatefulWidget {
 }
 
 class _IoManagementState extends State<IoManagement> {
-  final db = FirebaseFirestore.instance.collection("InOutLog");
-  late List<Map<String, dynamic>> ioItems;
-  bool isLoad = false;
-
-  void loadIoLog() async {
-    List<Map<String, dynamic>> tempList = [];
-    var data = await db.get();
-    for (var element in data.docs) {
-      tempList.add(element.data());
-    }
-    setState(() {
-      isLoad = true;
-      ioItems = tempList;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadIoLog();
-  }
+  final ioLogDb = FirebaseFirestore.instance.collection("InOutLog");
+  List<InOutLog> listIo = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +26,10 @@ class _IoManagementState extends State<IoManagement> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('-'),
+                    onPressed: () {
+                      Get.to(const CreateOutputSlipScreen());
+                    },
+                    child: const Text('-'),
                   ),
                 ),
                 Expanded(
@@ -53,45 +37,64 @@ class _IoManagementState extends State<IoManagement> {
                     onPressed: () {
                       Get.to(const CreateInputSlipScreen());
                     },
-                    child: Text('+'),
+                    child: const Text('+'),
                   ),
                 ),
               ],
             ),
             Expanded(
-              child: isLoad
-                  ? ListView.builder(
-                  itemCount: ioItems.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Container(
+              child: Center(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: ioLogDb.snapshots(),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasError){
+                      return const Text("Something worng happen");
+                    }
+                    if(snapshot.connectionState == ConnectionState.waiting){
+                      return const CircularProgressIndicator();
+                    }
+                    for(var data in snapshot.data!.docs){
+                      listIo.add(InOutLog.fromSnapshot(data));
+                    }
+                    return ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      shrinkWrap: true,
+                      itemCount: listIo.length,
+                      itemBuilder: (context, index) => Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.nearlyBlack,
+                          border: Border.all(color: Colors.black12),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: ListTile(
-                          shape: const RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.black12),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          onTap: () {
-              
-                          },
-                          title: Row(
+                        child: Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(ioItems[index]["Type"] ?? "Not given",
-                                    style: const TextStyle(color: AppTheme.white,fontWeight: FontWeight.bold)),
+                              const Text("Phiếu nhập xuất", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                              const Divider(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(listIo[index].createCase,),
+                                  Text(listIo[index].createType, style: TextStyle(color: (listIo[index].createType == 'Input Slip')?Colors.green:Colors.red),),
+                                ],
                               ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Người tạo: ${listIo[index].creatorName}'??''),
+                                  Text('Ngày tạo: ${listIo[index].createDay}'),
+                                ],
+                              )
                             ],
                           ),
                         ),
                       ),
                     );
-                  })
-                  : const CircularProgressIndicator(),
+                  },
+                ),
+              ),
             ),
           ],
         ),

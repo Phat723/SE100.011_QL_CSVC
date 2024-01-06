@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:school_facility_management/Screen/device_management_screen.dart';
+import 'package:school_facility_management/Screen/borrow_slip_management_screen.dart';
+import 'package:school_facility_management/Screen/create_borrow_slip_screen.dart';
+import 'package:school_facility_management/Screen/create_report_screen.dart';
 import 'package:school_facility_management/Screen/device_type_management_screen.dart';
 import 'package:school_facility_management/Screen/in_out_management.dart';
+import 'package:school_facility_management/Screen/report_management_screen.dart';
+import 'package:school_facility_management/Screen/room_management_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import '../CustomDrawer/drawer_user_controller.dart';
 import '../CustomDrawer/home_drawer.dart';
@@ -58,19 +62,49 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
             screenView = const HomeScreen();
           });
           break;
-        case DrawerIndex.Help:
+        case DrawerIndex.User:
           setState(() {
             screenView = const UserManagement();
           });
           break;
-        case DrawerIndex.FeedBack:
+        case DrawerIndex.Device:
           setState(() {
             screenView = const DeviceTypeManagement();
           });
           break;
-        case DrawerIndex.Invite:
+        case DrawerIndex.InOut:
           setState(() {
             screenView = const IoManagement();
+          });
+          break;
+        case DrawerIndex.CreateReport:
+          setState(() {
+            screenView = const CreateReportScreen();
+          });
+          break;
+        case DrawerIndex.Report:
+          setState(() {
+            screenView = const ReportManagementScreen();
+          });
+          break;
+        case DrawerIndex.Borrow:
+          setState(() {
+            screenView = const CreateBorrowSlipScreen();
+          });
+          break;
+        case DrawerIndex.BorrowManagement:
+          setState(() {
+            screenView = const BorrowSlipManagementScreen();
+          });
+          break;
+        case DrawerIndex.Room:
+          setState(() {
+            screenView = const RoomManagementScreen();
+          });
+          break;
+        case DrawerIndex.Broken:
+          setState(() {
+            screenView = const RoomManagementScreen();
           });
           break;
         default:

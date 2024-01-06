@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,8 @@ class DeviceDetailController extends GetxController {
   final TextEditingController storeCodeController = TextEditingController();
   final TextEditingController deviceDetailNameController = TextEditingController();
   final TextEditingController deviceOwnerController = TextEditingController();
+  CollectionReference areaCollection = FirebaseFirestore.instance.collection("Area");
+  CollectionReference? roomCollection;
   String caseValue = 'Mua mới';
   List<String> caseItems = ['Mua mới', 'Tài trợ'];
   RxBool isState = true.obs;

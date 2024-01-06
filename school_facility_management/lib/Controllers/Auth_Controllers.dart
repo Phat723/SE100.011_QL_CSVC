@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_facility_management/Screen/login_screen.dart';
-import '../Screen/navigator_home_screen.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
@@ -28,7 +28,6 @@ class AuthController extends GetxController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("userID", user.user!.uid);
       print(user.user!.uid);
-      Get.to(const NavigatorHomeScreen());
   }
 
   static Future<void> logoutUser() async {
@@ -41,6 +40,18 @@ class AuthController extends GetxController {
   static Future<MyUser> getUserDetail(String id) async{
     final snapshot = await _db.collection("Client").doc(id).get();
     return MyUser.fromSnapShot(snapshot);
+  }
+  Future<MyUser?> getCurrentUserInfo() async{
+    String id = FirebaseAuth.instance.currentUser!.uid;
+    MyUser? myUser;
+    await FirebaseFirestore.instance
+        .collection("Client")
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+       myUser = MyUser.fromSnapShot(snapshot);
+    });
+    return myUser;
   }
 
 }
