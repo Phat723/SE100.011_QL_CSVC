@@ -103,13 +103,17 @@ class AppTheme {
 
  static InputDecorationTheme darkInputDecorationTheme =
   InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10),borderSide: const BorderSide(width: 2.0,color: Colors.black12)),
       prefixIconColor: Colors.black,
-
+      suffixIconColor: Colors.black,
       floatingLabelStyle: const TextStyle (color: AppTheme.darkText),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(width: 2.0,color: Colors.black12),
+      ),
       focusedBorder:  OutlineInputBorder(
-        borderSide: const BorderSide(width: 2.0),
-        borderRadius: BorderRadius.circular(50),
+        borderSide: const BorderSide(width: 2.0,color: Colors.black12),
+        borderRadius: BorderRadius.circular(10),
       ),
   );
 }

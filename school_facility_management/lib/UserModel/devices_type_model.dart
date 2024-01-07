@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DeviceType {
   final String deviceTypeId;
   final String deviceTypeName;
-  final int deviceTypeAmount;
+  int deviceTypeAmount;
 
-  const DeviceType(
+  DeviceType(
       {required this.deviceTypeId,
         required this.deviceTypeName,
         this.deviceTypeAmount = 0});
@@ -14,5 +16,27 @@ class DeviceType {
       "DeviceType Name": deviceTypeName,
       "DeviceType Amount": deviceTypeAmount,
     };
+  }
+  factory DeviceType.fromMap(Map<String, dynamic> map) {
+    return DeviceType(
+      deviceTypeId: map['DeviceType Id'],
+      deviceTypeName: map['DeviceType Name'],
+      deviceTypeAmount: map['DeviceType Amount'] ?? 0,
+    );
+  }
+
+  factory DeviceType.fromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+
+    if (data == null) {
+      // Handle the case where data is null (if the document doesn't exist)
+      throw Exception("Document does not exist");
+    }
+
+    return DeviceType(
+      deviceTypeId: data['DeviceType Id'],
+      deviceTypeName: data['DeviceType Name'],
+      deviceTypeAmount: data['DeviceType Amount'] ?? 0,
+    );
   }
 }

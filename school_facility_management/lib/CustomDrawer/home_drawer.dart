@@ -37,29 +37,49 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: const Icon(Icons.home),
       ),
       DrawerList(
-        index: DrawerIndex.Help,
+        index: DrawerIndex.User,
         labelName: 'User management',
-        icon: const Icon(Icons.abc_rounded),
+        icon: const Icon(Icons.account_circle),
       ),
       DrawerList(
-        index: DrawerIndex.FeedBack,
+        index: DrawerIndex.Device,
         labelName: 'Device management',
         icon: const Icon(Icons.help),
       ),
       DrawerList(
-        index: DrawerIndex.Invite,
-        labelName: 'Chart',
+        index: DrawerIndex.InOut,
+        labelName: 'In Out Management',
         icon: const Icon(Icons.group),
       ),
       DrawerList(
-        index: DrawerIndex.Share,
-        labelName: 'Rate the app',
+        index: DrawerIndex.Report,
+        labelName: 'Report Management',
         icon: const Icon(Icons.share),
       ),
       DrawerList(
-        index: DrawerIndex.About,
-        labelName: 'About Us',
+        index: DrawerIndex.CreateReport,
+        labelName: 'Create Report',
         icon: const Icon(Icons.info),
+      ),
+      DrawerList(
+        index: DrawerIndex.Borrow,
+        labelName: 'Borrow Device',
+        icon: const Icon(Icons.abc_rounded),
+      ),
+      DrawerList(
+        index: DrawerIndex.BorrowManagement,
+        labelName: 'Borrow Management',
+        icon: const Icon(Icons.add_circle),
+      ),
+      DrawerList(
+        index: DrawerIndex.Broken,
+        labelName: 'Vi phạm',
+        icon: const Icon(Icons.ac_unit_sharp),
+      ),
+      DrawerList(
+        index: DrawerIndex.Room,
+        labelName: 'Room Management',
+        icon: const Icon(Icons.room),
       ),
     ];
   }
@@ -294,12 +314,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
 enum DrawerIndex {
   HOME,
-  FeedBack,
-  Help,
-  Share,
-  About,
-  Invite,
-  Testing,
+  User,
+  Device,
+  InOut,
+  Report,
+  CreateReport,
+  Borrow,
+  BorrowManagement,
+  Broken,
+  Room,
 }
 
 class DrawerList {
