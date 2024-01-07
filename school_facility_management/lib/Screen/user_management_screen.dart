@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/signup_screen.dart';
 import 'package:school_facility_management/Screen/user_info_screen.dart';
 
 class UserManagement extends StatefulWidget {
-  const UserManagement({super.key});
+  const UserManagement({Key? key}) : super(key: key);
 
   @override
   State<UserManagement> createState() => _UserManagementState();
@@ -38,77 +40,190 @@ class _UserManagementState extends State<UserManagement> {
     });
   }
 
+  Future<void> showConfirmationDialog(int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Ngăn người dùng đóng hộp thoại bằng cách nhấn bên ngoài
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Bạn có chắc chắn muốn xóa người dùng này?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Xóa'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteUser(index);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+   void deleteUser(int index) async {
+    String id = items[index]["Id"];
+    await collection.doc(id).delete();
+    await FirebaseAuth.instance.currentUser!.delete();
+    Fluttertoast.showToast(msg: "Successfully deleted");
+    loadUsers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Quản Lý Người Dùng',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+      ),
       body: Center(
         child: isLoaded
             ? ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                    onTap: ()async{
-                     var myUser= await AuthController.getUserDetail(items[index]["Id"]);
-                      Get.to(const UserInfoScreen(),arguments:[myUser]);
-                    },
-                    shape: RoundedRectangleBorder(
-                        side: const BorderSide(width: 2),
-                        borderRadius: BorderRadius.circular(20)),
-                    leading: const CircleAvatar(
-                      backgroundColor: Colors.green,
-                      child: Icon(Icons.person),
-                    ),
-                    title: Row(
-                      children: [
-                        Text(items[index]["Username"] ?? "Not given"),
-                        const SizedBox(width: 10),
-                        Text(items[index]["Role"] ?? "Not given"),
-                      ],
-                    ),
-                    subtitle: Text(items[index]["Email"]),
-
-                    trailing: PopupMenuButton<int>(
-
-                      itemBuilder: (BuildContext context) =>[
-                        const PopupMenuItem(value: 0, child: Text("Remove")
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                     onTap: () async {
+                      var myUser = await AuthController.getUserDetail(items[index]["Id"]);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserInfoScreen(userData: myUser),
                         ),
-                        const PopupMenuItem(value: 1, child: Text("Edit"))
-                      ],
-                      onSelected:(int value) {
-                        switch(value){
-                          case 0: //Remove
-                            collection.doc(items[index]["id"]).delete();
-                            Fluttertoast.showToast(msg: "Successfully deleted");
-                            loadUsers();
-                            break;
-                          case 1:
-                            break;
-                        }
-                      },
-                    )
+                      );
+                    },
 
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(width: 2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: const Color.fromARGB(255, 52, 122, 233),
+                        child: items[index]["imageURL"] != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: Image.network(
+                                  items[index]["imageURL"],
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                              )
+                            : const Icon(Icons.person),
+                        foregroundColor: Colors.white,
+                      ),
+                    
+                     title: RichText(
+          text: TextSpan(
+            text: 'Họ tên: ',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Set the desired color
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: items[index]["Username"] ?? "Not given",
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
                 ),
-              );
-            })
+              ),
+            ],
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                text: 'Vai trò: ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black, // Set the desired color
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: items[index]["Role"] ?? "Not given",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'Email: ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black, // Set the desired color
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: items[index]["Email"] ?? "Not given",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          showConfirmationDialog(index);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              )
             : const Text("No data"),
       ),
-      appBar: AppBar(
-        title: const Text("School facility"),
-        centerTitle: true,
-      ),
-
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () async{
-          await Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
+        backgroundColor: Colors.blue, // Set the desired background color
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+          );
           loadUsers();
         },
-        child: const Icon(Icons.person_add_alt_1),
+        child: Icon(
+          Icons.person_add_alt_1,
+          color: Colors.white, // Set the desired icon color
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
 }
