@@ -329,30 +329,33 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
               );
             },
           ),
-           actions: <Widget>[
-            TextButton(
-              child: Text(
-                selectedRoom == null ? 'Thêm' : 'Cập nhật',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 24, 87, 222)),
-              ),
-              onPressed: () {
-                if (_validateForm()) {
-                  selectedRoom == null ? addNewRoom() : updateRoom(selectedRoom!);
-                  Get.snackbar("Thông Báo!", selectedRoom == null ? "Thêm phòng mới thành công." : "Cập nhật phòng thành công.");
-                  Navigator.of(context).pop();
-                } else {
-                  Get.snackbar("Lỗi", "Vui lòng điền đầy đủ thông tin");
-                }
-              },
-            ),
-          ],
+          actions: <Widget>[
+  Center(
+    child: TextButton(
+      onPressed: () {
+        if (_validateForm()) {
+          selectedRoom == null ? addNewRoom() : updateRoom(selectedRoom!);
+          Get.snackbar("Thông Báo!", selectedRoom == null ? "Thêm phòng mới thành công." : "Cập nhật phòng thành công.");
+          Navigator.of(context).pop();
+        } else {
+          Get.snackbar("Lỗi", "Vui lòng điền đầy đủ thông tin");
+        }
+      },
+      child: Text(
+        selectedRoom == null ? 'Thêm' : 'Cập nhật',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: Colors.white,
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 24, 87, 222)),
+      ),
+    ),
+  ),
+],
+
         );
       },
     );
