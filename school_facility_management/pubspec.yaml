@@ -48,6 +48,8 @@ dependencies:
   photo_view: ^0.14.0
   flutter_barcode_scanner: ^2.0.0
   fl_chart: ^0.66.0
+  file_picker: ^6.1.1
+  font_awesome_flutter: ^10.6.0
 
 dev_dependencies:
   flutter_test:
@@ -74,7 +76,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/
+    - assets/icons8-school-100.png
+    - assets/csvc.jpg
+    - assets/no_result_search_icon.png
+    - assets/empty-box.png
+    - assets/UserDefaultAvatar.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

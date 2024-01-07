@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Screen/create_input_slip.dart';
 import 'package:school_facility_management/Screen/create_output_slip.dart';
 import 'package:school_facility_management/UserModel/in_out_log_model.dart';
@@ -47,17 +46,18 @@ class _IoManagementState extends State<IoManagement> {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: ioLogDb.snapshots(),
                   builder: (context, snapshot) {
-                    if(snapshot.hasError){
+                    if (snapshot.hasError) {
                       return const Text("Something worng happen");
                     }
-                    if(snapshot.connectionState == ConnectionState.waiting){
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     }
-                    for(var data in snapshot.data!.docs){
+                    for (var data in snapshot.data!.docs) {
                       listIo.add(InOutLog.fromSnapshot(data));
                     }
                     return ListView.separated(
-                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
                       shrinkWrap: true,
                       itemCount: listIo.length,
                       itemBuilder: (context, index) => Container(
@@ -71,19 +71,36 @@ class _IoManagementState extends State<IoManagement> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Phiếu nhập xuất", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                              const Text(
+                                "Phiếu nhập xuất",
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
                               const Divider(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(listIo[index].createCase,),
-                                  Text(listIo[index].createType, style: TextStyle(color: (listIo[index].createType == 'Input Slip')?Colors.green:Colors.red),),
+                                  Text(
+                                    listIo[index].createCase,
+                                  ),
+                                  Text(
+                                    listIo[index].createType,
+                                    style: TextStyle(
+                                        color: (listIo[index].createType ==
+                                                'Input Slip')
+                                            ? Colors.green
+                                            : Colors.red),
+                                  ),
                                 ],
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Người tạo: ${listIo[index].creatorName}'??''),
+                                  Text(
+                                      'Người tạo: ${listIo[index].creatorName}' ??
+                                          ''),
                                   Text('Ngày tạo: ${listIo[index].createDay}'),
                                 ],
                               )

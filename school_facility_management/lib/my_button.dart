@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_facility_management/Model/theme.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
@@ -11,14 +12,17 @@ class MyButton extends StatelessWidget {
         onPressed: onPressed,
         style: ButtonStyle(
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Themes.gradientDeepClr),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25.0),
             ),
           ),
         ),
-        child: Text(text, style: const TextStyle(fontSize: 16),)
-    );
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 16),
+        ));
   }
 }
