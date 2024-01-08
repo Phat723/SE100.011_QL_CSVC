@@ -49,7 +49,32 @@ class RoomController extends GetxController{
         Room currentRoom = Room.fromMap(roomSnapshot.data() as Map<String, dynamic>);
 
         // Xóa thiết bị khỏi danh sách
-        currentRoom.devices!.remove(deviceName);
+        currentRoom.devices!.removeWhere((element) => element['DeviceDetail Name'] == deviceName.deviceDetailName);
+        // Cập nhật lại tài liệu Room trên Firestore
+        await roomRef.update(currentRoom.toMap());
+
+        print('Đã cập nhật danh sách thiết bị và lưu lên Firestore thành công.');
+      } else {
+        print('Không tìm thấy phòng với mã: $roomId');
+      }
+    } catch (e) {
+      print('Lỗi khi cập nhật danh sách thiết bị và lưu lên Firestore: $e');
+    }
+  }
+  Future<void> updateStatusDevice(String areaId, String roomId, DeviceDetail deviceName, String statusChange) async {
+    try {
+      // Lấy tham chiếu đến tài liệu Room cần cập nhật
+      DocumentReference roomRef = FirebaseFirestore.instance.collection('Area').doc(areaId).collection("Room").doc(roomId);
+
+      // Lấy dữ liệu hiện tại của tài liệu Room
+      DocumentSnapshot roomSnapshot = await roomRef.get();
+      if (roomSnapshot.exists) {
+        // Chuyển dữ liệu từ Firestore thành đối tượng Room
+        Room currentRoom = Room.fromMap(roomSnapshot.data() as Map<String, dynamic>);
+
+        currentRoom.devices!.removeWhere((element) => element['DeviceDetail Id'] == deviceName.deviceDetailId);
+        deviceName.deviceStatus = statusChange;
+        currentRoom.devices!.add(deviceName.toMap());
 
         // Cập nhật lại tài liệu Room trên Firestore
         await roomRef.update(currentRoom.toMap());

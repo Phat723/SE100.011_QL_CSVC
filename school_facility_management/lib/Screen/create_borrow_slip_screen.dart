@@ -352,7 +352,7 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
       randomDigits += random.nextInt(10).toString();
     }
 
-    // Thêm tiền tố "RP_"
+    // Thêm tiền tố "BR_"
     String result = "BR_$randomDigits";
     return result;
   }
@@ -386,6 +386,9 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
   }
 
   void getRoom() async {
+    setState(() {
+      borrowDeviceList.clear();
+    });
     DocumentReference currentRoom = FirebaseFirestore.instance
         .collection("Area")
         .doc(dv.areaId.value)
@@ -396,7 +399,9 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
       setState(() {
         selectedRoom =
             Room.fromMap(roomSnapshot.data() as Map<String, dynamic>);
-        borrowDeviceList = List.generate(selectedRoom!.devices!.length, (index) => selectedRoom!.devices![index]["DeviceDetail Name"]);
+        for(int index = 0; index < selectedRoom!.devices!.length; index++){
+          borrowDeviceList.addIf(selectedRoom!.devices![index]["DeviceDetail Status"] == "Sẵn dùng", selectedRoom!.devices![index]["DeviceDetail Name"]);
+        }
       });
     }
   }

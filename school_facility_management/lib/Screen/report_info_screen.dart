@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:school_facility_management/Controllers/Report_Controller.dart';
+import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
+import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 import 'package:school_facility_management/UserModel/report_model.dart';
 
 class ReportInfoScreen extends StatefulWidget {
@@ -20,6 +22,7 @@ class ReportInfoScreen extends StatefulWidget {
 class _ReportInfoScreenState extends State<ReportInfoScreen> {
   ReportController reportController = Get.put(ReportController());
   Report? report;
+  RoomController roomController = Get.put(RoomController());
 
   @override
   void initState() {
@@ -108,18 +111,24 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                     ElevatedButton(onPressed: (){
                       DocumentReference docRef = FirebaseFirestore.instance.collection("Report").doc(report!.reportId);
                       report!.status = "Đã xử lý";
+                      DeviceDetail deviceDetail = DeviceDetail.fromMap(report!.deviceDetail);
+                      roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, report!.status);
                       docRef.update(report!.toMap());
                       Get.back();
                     }, child: const Text("Đã Xử Lý")),
                     ElevatedButton(onPressed: ()async{
                       DocumentReference docRef = FirebaseFirestore.instance.collection("Report").doc(report!.reportId);
                       report!.status = "Đang xử lý";
+                      DeviceDetail deviceDetail = DeviceDetail.fromMap(report!.deviceDetail);
+                      roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, report!.status);
                       await docRef.update(report!.toMap());
                       Get.back();
                     }, child: const Text("Đang Xử Lý")),
                     ElevatedButton(onPressed: ()async{
                       DocumentReference docRef = FirebaseFirestore.instance.collection("Report").doc(report!.reportId);
                       report!.status = "Đóng";
+                      DeviceDetail deviceDetail = DeviceDetail.fromMap(report!.deviceDetail);
+                      roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, "Sẵn dùng");
                       await docRef.update(report!.toMap());
                       Get.back();
                     }, child: const Text("Đóng")),

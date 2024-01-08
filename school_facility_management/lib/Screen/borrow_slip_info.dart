@@ -19,6 +19,8 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
   List<String> selectedBorrowDeviceList = [];
   List<String> damageDeviceNameList = [];
   List<DeviceDetail> damageDeviceList = [];
+  List<DocumentSnapshot> documents = [];
+  String newViolate = '';
 
   @override
   void initState() {
@@ -65,7 +67,8 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                     child: Container(
                       height: 70,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
+                        border: Border.all(color: Colors.black12),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -79,39 +82,44 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                           ),
                           Text(borrowSlip!.borrowDevices[index]
                               ["DeviceDetail Status"]),
-                          borrowSlip!.status != "Đã trả"?Checkbox(
-                            value: damageDeviceNameList.contains(borrowSlip!
-                                .borrowDevices[index]["DeviceDetail Name"]),
-                            onChanged: (selected) {
-                              setState(() {
-                                DeviceDetail deviceItem = DeviceDetail.fromMap(
-                                    borrowSlip!.borrowDevices[index]);
-                                bool isAdding = selected != null && selected;
-                                if (isAdding) {
-                                  deviceItem.deviceStatus = "Hỏng";
-                                  borrowSlip!.borrowDevices[index] = deviceItem.toMap();
-                                  damageDeviceList.add(deviceItem);
-                                  damageDeviceNameList
-                                      .add(deviceItem.deviceDetailName);
-                                } else {
-                                  deviceItem.deviceStatus = "Đang mượn";
-                                  borrowSlip!.borrowDevices[index] = deviceItem.toMap();
-                                  FirebaseFirestore.instance
-                                      .collection("BorrowSlip")
-                                      .doc(borrowSlip!.borrowID)
-                                      .update({
-                                    "BorrowDevices": {
-                                      "DeviceDetail Status":
-                                          deviceItem.deviceStatus
-                                    }
-                                  });
-                                  damageDeviceList.remove(deviceItem);
-                                  damageDeviceNameList
-                                      .remove(deviceItem.deviceDetailName);
-                                }
-                              });
-                            },
-                          ):const SizedBox.shrink(),
+                          borrowSlip!.status != "Đã trả"
+                              ? Checkbox(
+                                  value: damageDeviceNameList.contains(
+                                      borrowSlip!.borrowDevices[index]
+                                          ["DeviceDetail Name"]),
+                                  onChanged: (selected) {
+                                    setState(() {
+                                      DeviceDetail deviceItem =
+                                          DeviceDetail.fromMap(
+                                              borrowSlip!.borrowDevices[index]);
+                                      bool isAdding =
+                                          selected != null && selected;
+                                      if (isAdding) {
+                                        borrowSlip!.borrowDevices[index] =
+                                            deviceItem.toMap();
+                                        damageDeviceList.add(deviceItem);
+                                        damageDeviceNameList
+                                            .add(deviceItem.deviceDetailName);
+                                      } else {
+                                        borrowSlip!.borrowDevices[index] =
+                                            deviceItem.toMap();
+                                        FirebaseFirestore.instance
+                                            .collection("BorrowSlip")
+                                            .doc(borrowSlip!.borrowID)
+                                            .update({
+                                          "BorrowDevices": {
+                                            "DeviceDetail Status":
+                                                deviceItem.deviceStatus
+                                          }
+                                        });
+                                        damageDeviceList.remove(deviceItem);
+                                        damageDeviceNameList.remove(
+                                            deviceItem.deviceDetailName);
+                                      }
+                                    });
+                                  },
+                                )
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),
@@ -125,17 +133,16 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                 borrowSlip!.status == "Chưa trả"
                     ? Flexible(
                         child: ElevatedButton(
-                            onPressed: () => confirmBroken().whenComplete(() =>
-                                Get.snackbar("Thông báo",
-                                    "Thay đổi dữ liệu thành công")),
-                            child: const Text("Tạo phiếu vi phạm")),
+                            onPressed: () => confirmBroken(),
+                            child: const Text("Chọn loại vi phạm")),
                       )
                     : const SizedBox.shrink(),
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
                       borrowSlip!.status = "Đã trả";
-                      borrowSlip!.returnDate = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+                      borrowSlip!.returnDate =
+                          "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
                       FirebaseFirestore.instance
                           .collection("BorrowSlip")
                           .doc(borrowSlip!.borrowID)
@@ -174,7 +181,82 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
         : const SizedBox.shrink();
   }
 
+  showViolateDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(color: Colors.black, width: 2.0)),
+          elevation: 2,
+          title: const Text("Danh mục hư hại"),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("ViolateType")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        documents = snapshot.data!.docs;
+                      }
+                      // Lấy danh sách tên từ documents
+                      List<String> violateNameList = documents
+                          .map((doc) => doc.get('Violate Name') as String)
+                          .toList();
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: violateNameList.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: GestureDetector(
+                                      onTap: () {
+                                        setState((){
+                                          newViolate = violateNameList[index];
+                                        });
+                                      },
+                                      child: Text(
+                                        violateNameList[index],
+                                        style: TextStyle(
+                                          color: (newViolate == violateNameList[index])?Colors.green:Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Xác nhận loại vi phạm'),
+              onPressed: () {},
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> confirmBroken() async {
+    await showViolateDialog();
     for (int index = 0; index < damageDeviceList.length; index++) {
       var db = FirebaseFirestore.instance
           .collection("DevicesType")
@@ -183,7 +265,12 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
           .doc(damageDeviceList[index].deviceId)
           .collection("Device Detail")
           .doc(damageDeviceList[index].deviceDetailId);
-      await db.update(damageDeviceList[index].toMap());
+      damageDeviceList[index].deviceStatus = newViolate;
+      try{
+        await db.update(damageDeviceList[index].toMap());
+      }catch(e){
+        print(e);
+      }
     }
   }
 }

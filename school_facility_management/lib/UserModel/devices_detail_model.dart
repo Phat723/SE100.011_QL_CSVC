@@ -4,23 +4,30 @@ class DeviceDetail {
   String deviceDetailId;
   String deviceId;
   String deviceTypeId;
-  String? areaId;
-  String? roomId;
+  String areaId;
+  String roomId;
   String storeCode;
   String deviceDetailName;
   String deviceStatus;
+  String deviceCost;
+  int maintainTime;
+  String storingDay;
   final String? deviceOwner;
 
-  DeviceDetail(
-      {required this.deviceDetailId,
-      required this.deviceId,
-      required this.deviceTypeId,
-      this.areaId = "Not given",
-      this.roomId = "Not given",
-      required this.storeCode,
-      required this.deviceDetailName,
-      required this.deviceStatus,
-      this.deviceOwner = "Unknown"});
+  DeviceDetail({
+    required this.deviceDetailId,
+    required this.deviceId,
+    required this.deviceTypeId,
+    this.areaId = "Not given",
+    this.roomId = "Not given",
+    required this.storeCode,
+    required this.deviceDetailName,
+    required this.deviceStatus,
+    this.deviceOwner = "Unknown",
+    required this.deviceCost,
+    required this.storingDay,
+    required this.maintainTime,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,6 +40,9 @@ class DeviceDetail {
       "DeviceDetail Name": deviceDetailName,
       "DeviceDetail Status": deviceStatus,
       "DeviceDetail Owner": deviceOwner,
+      "DeviceDetail Cost": deviceCost,
+      "DeviceDetail MaintainTime": maintainTime,
+      "DeviceDetail StoringDay": storingDay,
     };
   }
 
@@ -47,6 +57,9 @@ class DeviceDetail {
       deviceDetailName: map["DeviceDetail Name"],
       deviceStatus: map["DeviceDetail Status"],
       deviceOwner: map["DeviceDetail Owner"],
+      deviceCost: map["DeviceDetail Cost"]??'',
+      maintainTime: map["DeviceDetail MaintainTime"]??0,
+      storingDay: map["DeviceDetail StoringDay"]??'',
     );
   }
 
