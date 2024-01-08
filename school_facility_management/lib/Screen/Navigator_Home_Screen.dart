@@ -7,6 +7,7 @@ import 'package:school_facility_management/Screen/in_out_management.dart';
 import 'package:school_facility_management/Screen/report_management_screen.dart';
 import 'package:school_facility_management/Screen/room_management_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
+import 'package:school_facility_management/Screen/violate_management_screen.dart';
 import '../CustomDrawer/drawer_user_controller.dart';
 import '../CustomDrawer/home_drawer.dart';
 import '../Model/AppTheme.dart';
@@ -43,7 +44,6 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
             drawerWidth: MediaQuery.of(context).size.width * 0.6,
             onDrawerCall: (DrawerIndex drawerIndexdata) {
               changeIndex(drawerIndexdata);
-              //callback from drawer for replace screen as user need with passing DrawerIndex(Enum index)
             },
             screenView: screenView,
             //we replace screen view as we need on navigate starting screens like MyHomePage, HelpScreen, FeedbackScreen, etc...
@@ -104,8 +104,9 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
           break;
         case DrawerIndex.Broken:
           setState(() {
-            screenView = const RoomManagementScreen();
+            screenView = const MaintainSlipManagementScreen();
           });
+        
           break;
         default:
           break;
