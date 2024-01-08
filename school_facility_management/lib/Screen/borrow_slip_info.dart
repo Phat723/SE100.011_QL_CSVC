@@ -65,6 +65,7 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                 ),
               ],
             ),
+            const Divider(),
             const SizedBox(height: 16),
             const Text(
               "Thiết bị đã mượn",

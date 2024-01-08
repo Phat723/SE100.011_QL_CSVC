@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
@@ -21,7 +20,7 @@ class MaintainSlipInfo extends StatefulWidget {
 
 class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
   MaintainSlip? maintainSlip;
-  String confirmName = ""; 
+  String confirmName = "";
 
   @override
   void initState() {
@@ -29,22 +28,20 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
     getCurrentUser();
     super.initState();
   }
+
   Future<void> getCurrentUser() async {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser != null) {
-      // Use the user's ID to fetch user information from Firestore
       DocumentSnapshot<Map<String, dynamic>> userSnapshot =
           await FirebaseFirestore.instance
               .collection("Client")
               .doc(firebaseUser.uid)
               .get();
 
-      // Create a MyUser object from the Firestore data
       MyUser currentUser = MyUser.fromSnapShot(userSnapshot);
 
       setState(() {
-        // Set the confirmName with the username
         confirmName = currentUser.username;
       });
     }
@@ -75,8 +72,16 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoItem("Người Tạo", maintainSlip?.creatorName, TextStyle(fontSize: 16)),
-            _buildInfoItem("Trạng Thái", maintainSlip?.maintainStatus, TextStyle(fontSize: 16)),
+            _buildInfoItem(
+              "Người Tạo",
+              maintainSlip?.creatorName,
+              TextStyle(fontSize: 16),
+            ),
+            _buildInfoItem(
+              "Trạng Thái",
+              maintainSlip?.maintainStatus,
+              TextStyle(fontSize: 16),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -96,6 +101,13 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                 ),
               ],
             ),
+            const Divider(),
+             _buildInfoItem(
+              "Tên người xác nhận",
+              confirmName,
+              TextStyle(fontSize: 16),
+            ),
+            const Divider(),
             const SizedBox(height: 16),
             const Text(
               "Thiết bị đã bảo trì",
@@ -119,16 +131,23 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              maintainSlip?.maintainDeviceList[index]["DeviceDetail Name"] ?? "",
+                              maintainSlip?.maintainDeviceList[index]
+                                      ["DeviceDetail Name"] ??
+                                  "",
                               style: AppTheme.body1.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              maintainSlip?.maintainDeviceList[index]["DeviceDetail Status"] ?? "",
+                              maintainSlip?.maintainDeviceList[index]
+                                      ["DeviceDetail Status"] ??
+                                  "",
                               style: TextStyle(
-                                color: getStatusColor(maintainSlip?.maintainDeviceList[index]["DeviceDetail Status"]),
+                                color: getStatusColor(
+                                  maintainSlip?.maintainDeviceList[index]
+                                      ["DeviceDetail Status"],
+                                ),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -140,33 +159,41 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                 },
               ),
             ),
-            const SizedBox(height: 16),
-            Center( // Center the button
+            Center(
               child: ElevatedButton(
                 onPressed: () async {
                   maintainSlip!.maintainStatus = "Hoàn thành";
-                  maintainSlip!.finishDay = Timestamp.fromDate(DateTime.now());
-                  await FirebaseFirestore.instance.collection("Maintain").doc(maintainSlip!.maintainID).update({
-                    "Maintain Device List": maintainSlip!.maintainDeviceList.map((device) {
+                  maintainSlip!.finishDay =
+                      Timestamp.fromDate(DateTime.now());
+                  await FirebaseFirestore.instance
+                      .collection("Maintain")
+                      .doc(maintainSlip!.maintainID)
+                      .update({
+                    "Maintain Device List": maintainSlip!
+                        .maintainDeviceList
+                        .map((device) {
                       return {
                         ...device,
                         "DeviceDetail Status": "Sẵn dùng",
                       };
                     }).toList(),
                     "Maintain Status": "Hoàn thành",
-                    "Confirm Name":confirmName,
+                    "Confirm Name": confirmName,
                   });
-                  Get.back();  
+                  Get.back();
                 },
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromARGB(255, 72, 119, 222),
-                  foregroundColor: Colors.white, // Text color
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 24,
+                  ),
                   child: Text(
                     "Xác nhận",
                     style: TextStyle(fontSize: 18),
@@ -181,27 +208,57 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
   }
 
   Widget _buildInfoItem(String label, String? value, TextStyle style) {
-    return value != null
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "$label:",
-                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 14),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    value,
-                    style: style,
+    if (value != null && label == "Tên người xác nhận") {
+      return maintainSlip?.maintainStatus == "Hoàn thành"
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "$label:",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        : const SizedBox.shrink();
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: style,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox.shrink();
+    } else {
+      return value != null
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "$label:",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: style,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox.shrink();
+    }
   }
 
   String formattedDate(Timestamp? timestamp) {
@@ -209,7 +266,7 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
       DateTime dateTime = timestamp.toDate();
       return DateFormat('dd/MM/yyyy').format(dateTime);
     } else {
-      return 'N/A'; // Return a default value if the timestamp is null
+      return 'N/A';
     }
   }
 
