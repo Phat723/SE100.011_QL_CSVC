@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/borrow_slip_info.dart';
 import 'package:school_facility_management/UserModel/borrow_slip_model.dart';
 
@@ -22,16 +23,29 @@ class _BorrowSlipManagementScreenState
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Borrow slip management"),
+       appBar: AppBar(
+          foregroundColor: Colors.white,
+          title: const Text(
+            'Quản Lý Phiếu Mượn',
+            style: TextStyle(fontSize: 20),
+          ),
           centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+          ),
         ),
         body: Center(
           child: StreamBuilder<QuerySnapshot>(
               stream: dataBorrowSlip.snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Text("Something Wrong happen");
+                  return const Text("Đã xảy ra lỗi");
                 }
                 if (snapshot.hasData) {
                   borrowList.clear();
@@ -117,7 +131,7 @@ class _BorrowSlipManagementScreenState
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              const Text("Người Duyệt", style: AppTheme.body1,),
+                                              const Text("Người Duyệt:", style: AppTheme.body1,),
                                               Text(borrowList[index].returnProcessorEmail, style: AppTheme.title,),
                                             ],
                                           ),

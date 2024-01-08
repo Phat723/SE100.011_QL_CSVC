@@ -46,7 +46,6 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
             drawerWidth: MediaQuery.of(context).size.width * 0.6,
             onDrawerCall: (DrawerIndex drawerIndexdata) {
               changeIndex(drawerIndexdata);
-              //callback from drawer for replace screen as user need with passing DrawerIndex(Enum index)
             },
             screenView: screenView,
             //we replace screen view as we need on navigate starting screens like MyHomePage, HelpScreen, FeedbackScreen, etc...
@@ -111,8 +110,7 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
           });
           break;
         case DrawerIndex.Maintain:
-          setState(() {
-            screenView = const CreateMaintainSlip();
+            screenView = const MaintainSlipManagementScreen();
           });
           break;
         default:

@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/room_model.dart';
 
 class RoomManagementScreen extends StatefulWidget {
-  const RoomManagementScreen({super.key});
-
+  const RoomManagementScreen({Key? key}) : super(key: key);
   @override
   State<RoomManagementScreen> createState() => _RoomManagementScreenState();
 }
@@ -16,13 +17,26 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
   TextEditingController roomNameController = TextEditingController();
   TextEditingController floorController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-
+  Room? selectedRoom;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Room Management"),
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Quản Lý Phòng Học',
+          style: TextStyle(fontSize: 20),
+        ),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -110,7 +124,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                         child: GridView.builder(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3, // Số cột trong grid
+                            crossAxisCount: 3,
                             crossAxisSpacing: 8.0,
                             mainAxisSpacing: 8.0,
                           ),
@@ -118,7 +132,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                           itemBuilder: (context, index) {
                             if (index == rooms.length) {
                               return GestureDetector(
-                                onTap: () => showRoomForm(),
+                                onTap: () => showRoomForm(null),
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -133,29 +147,69 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                                 ),
                               );
                             }
-                            return Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.black12),
-                              ),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    rooms[index].roomName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
+                            bool canDeleteRoom = rooms[index].devices!.isEmpty;
+                            return Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => showRoomForm(rooms[index]),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.black12),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          rooms[index].roomName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          'SL thiết bị: ${rooms[index].devices!.length}',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Text(
-                                    'SL thiết bị: ${rooms[index].devices!.length}',
-                                    style: const TextStyle(fontSize: 14),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 10,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (canDeleteRoom) {
+                                        // Chức năng xóa lớp khi nhấn chọn
+                                        showDeleteConfirmation(rooms[index]);
+                                      } else {
+                                        // Hiển thị thông báo không cho phép xóa
+                                        showSnackbar("Không thể xóa phòng!");
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: canDeleteRoom
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 20,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           },
                         ),
@@ -172,7 +226,211 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
     );
   }
 
-  void addNewRoom() async{
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void showRoomForm(Room? existingRoom) {
+    String generatedRoomId = generateRoomId();
+    selectedRoom = existingRoom;
+    roomIdController.text = existingRoom?.roomId ?? 'R$generatedRoomId';
+    roomNameController.text = existingRoom?.roomName ?? '';
+    floorController.text = existingRoom?.floor ?? '';
+    descriptionController.text = existingRoom?.description ?? '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Color.fromARGB(222, 19, 81, 238), width: 2.0),
+          ),
+          elevation: 2,
+          title: Text(
+            selectedRoom == null ? 'Thêm mới phòng' : 'Cập nhật phòng',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 24, 87, 222),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // RoomID input
+                  TextFormField(
+                    controller: roomIdController,
+                    decoration: InputDecoration(
+                      labelText: 'Mã Phòng',
+                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    readOnly: true,
+                  ),
+                  const SizedBox(height: 10),
+                  // RoomName input
+                  TextFormField(
+                    controller: roomNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Tên Phòng',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập tên phòng';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  // Floor input
+                  TextFormField(
+                    controller: floorController,
+                    decoration: InputDecoration(
+                      labelText: 'Tầng',
+                    ),
+                    keyboardType: TextInputType.number, // Set the keyboard type to number
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly, // Allow only numeric input
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập tầng';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  // Description input
+                  TextFormField(
+                    controller: descriptionController,
+                    decoration: InputDecoration(
+                      labelText: 'Mô tả',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập mô tả';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+  Center(
+    child: TextButton(
+      onPressed: () {
+        if (_validateForm()) {
+          selectedRoom == null ? addNewRoom() : updateRoom(selectedRoom!);
+          Get.snackbar("Thông Báo!", selectedRoom == null ? "Thêm phòng mới thành công." : "Cập nhật phòng thành công.");
+          Navigator.of(context).pop();
+        } else {
+          Get.snackbar("Lỗi", "Vui lòng điền đầy đủ thông tin");
+        }
+      },
+      child: Text(
+        selectedRoom == null ? 'Thêm' : 'Cập nhật',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: Colors.white,
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 24, 87, 222)),
+      ),
+    ),
+  ),
+],
+
+        );
+      },
+    );
+  }
+
+  void updateRoom(Room room) async {
+    if (selectedArea == null) {
+      Get.snackbar('Thông Báo', "Bạn chưa chọn khu vực!");
+    } else {
+      var areaDB = FirebaseFirestore.instance.collection("Area").doc(selectedArea).collection("Room");
+
+      await areaDB.doc(room.roomId).update({
+        'Room Name': roomNameController.text,
+        'Floor': floorController.text,
+        'Description': descriptionController.text,
+      });
+
+      roomIdController.clear();
+      roomNameController.clear();
+      floorController.clear();
+      descriptionController.clear();
+    }
+  }
+
+  bool _validateForm() {
+    // Add your validation logic here
+    if (roomNameController.text.isEmpty ||
+        floorController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  String generateRoomId() {
+    // You can implement your logic to generate a unique Room ID here.
+    // For example, you can use a random number or a timestamp.
+    return DateTime.now().millisecondsSinceEpoch.toString().substring(7);
+  }
+
+  void showDeleteConfirmation(Room room) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận Xóa Phòng'),
+          content: const Text('Bạn có chắc chắn muốn xóa phòng này không?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Xử lý chức năng xóa phòng
+                deleteRoom(room);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Xóa'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Hủy'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteRoom(Room room) {
+    FirebaseFirestore.instance
+        .collection('Area')
+        .doc(selectedArea)
+        .collection('Room')
+        .doc(room.roomId)
+        .delete();
+  }
+
+  void addNewRoom() async {
     if (selectedArea == '' || selectedArea == null) {
       Get.snackbar('Thông Báo', "Bạn chưa chọn khu vực!");
     } else {
@@ -185,11 +443,12 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
           .doc(selectedArea)
           .collection("Room");
       Room newRoom = Room(
-          areaId: selectedArea!,
-          roomId: roomId,
-          roomName: roomName,
-          floor: floor,
-          description: description);
+        areaId: selectedArea!,
+        roomId: roomId,
+        roomName: roomName,
+        floor: floor,
+        description: description,
+      );
       setState(() {
         areaDB.doc(roomId).set(newRoom.toMap());
       });
@@ -198,63 +457,5 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
       floorController.clear();
       descriptionController.clear();
     }
-  }
-
-  void showRoomForm() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(8),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: const BorderSide(color: Colors.black, width: 2.0)),
-          elevation: 2,
-          title: const Text('Add New Room'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // RoomID input
-                  TextFormField(
-                    controller: roomIdController,
-                    decoration: const InputDecoration(labelText: 'RoomID'),
-                  ),
-                  const SizedBox(height: 10),
-                  // RoomName input
-                  TextFormField(
-                    controller: roomNameController,
-                    decoration: const InputDecoration(labelText: 'RoomName'),
-                  ),
-                  const SizedBox(height: 10),
-                  // Floor input
-                  TextFormField(
-                    controller: floorController,
-                    decoration: const InputDecoration(labelText: 'Floor'),
-                  ),
-                  const SizedBox(height: 10),
-                  // Description input
-                  TextFormField(
-                    controller: descriptionController,
-                    decoration: const InputDecoration(labelText: 'Description'),
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Add'),
-              onPressed: () {
-                addNewRoom();
-                Get.snackbar("Thông Báo!", "Thêm phòng mới thành công.");
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

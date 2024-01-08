@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/borrow_slip_model.dart';
 import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 
@@ -22,6 +23,7 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
   List<DocumentSnapshot> documents = [];
   String newViolate = '';
 
+
   @override
   void initState() {
     borrowSlip = widget.receivedBorrowSlip;
@@ -32,7 +34,23 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Borrow Slip Info"), centerTitle: true),
+      appBar: AppBar(
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Chi Tiết Phiếu Mượn',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -45,15 +63,17 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                    child:
-                        _buildInfoItem("Ngày Mượn:", borrowSlip?.borrowDate)),
+                  child: _buildInfoItem("Ngày Mượn", borrowSlip?.borrowDate),
+                ),
                 Flexible(
-                    child: _buildInfoItem("Ngày Trả:", borrowSlip?.returnDate)),
+                  child: _buildInfoItem("Ngày Trả", borrowSlip?.returnDate),
+                ),
               ],
             ),
+            const Divider(),
             const SizedBox(height: 16),
             const Text(
-              "Borrowed Device",
+              "Thiết bị đã mượn",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -65,42 +85,57 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      height: 70,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12),
-                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.blueGrey[100],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color:const Color.fromARGB(255, 1, 0, 0) ),
                       ),
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Expanded(
+                            child: Text(
+                              borrowSlip!.borrowDevices[index]
+                                  ["DeviceDetail Name"] ??
+                                  "",
+                              style: AppTheme.body1.copyWith(
+                                color: Colors.black,
+                               fontWeight:FontWeight.bold
+                              ),
+                            ),
+                          ),
                           Text(
                             borrowSlip!.borrowDevices[index]
-                                    ["DeviceDetail Name"] ??
-                                "",
-                            style: AppTheme.body1,
+                                ["DeviceDetail Status"],
+                            style: TextStyle(
+                              color: getStatusColor(
+                                borrowSlip!.borrowDevices[index]
+                                    ["DeviceDetail Status"],
+                              ),
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
-                          Text(borrowSlip!.borrowDevices[index]
-                              ["DeviceDetail Status"]),
                           borrowSlip!.status != "Đã trả"
                               ? Checkbox(
-                                  value: damageDeviceNameList.contains(
-                                      borrowSlip!.borrowDevices[index]
-                                          ["DeviceDetail Name"]),
+                                  value: damageDeviceNameList.contains(borrowSlip!
+                                      .borrowDevices[index]["DeviceDetail Name"]),
                                   onChanged: (selected) {
                                     setState(() {
                                       DeviceDetail deviceItem =
-                                          DeviceDetail.fromMap(
-                                              borrowSlip!.borrowDevices[index]);
+                                          DeviceDetail.fromMap(borrowSlip!
+                                              .borrowDevices[index]);
                                       bool isAdding =
                                           selected != null && selected;
                                       if (isAdding) {
+                                        deviceItem.deviceStatus = "Hỏng";
                                         borrowSlip!.borrowDevices[index] =
                                             deviceItem.toMap();
                                         damageDeviceList.add(deviceItem);
-                                        damageDeviceNameList
-                                            .add(deviceItem.deviceDetailName);
+                                        damageDeviceNameList.add(
+                                            deviceItem.deviceDetailName);
                                       } else {
+                                        deviceItem.deviceStatus = "Đang mượn";
                                         borrowSlip!.borrowDevices[index] =
                                             deviceItem.toMap();
                                         FirebaseFirestore.instance
@@ -127,29 +162,41 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                 },
               ),
             ),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 borrowSlip!.status == "Chưa trả"
-                    ? Flexible(
-                        child: ElevatedButton(
-                            onPressed: () => confirmBroken(),
-                            child: const Text("Chọn loại vi phạm")),
+                    ? ElevatedButton(
+                        onPressed: () => confirmBroken().whenComplete(() =>
+                            Get.snackbar("Thông báo",
+                                "Thay đổi dữ liệu thành công")),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        child: const Text(
+                          "Tạo phiếu vi phạm",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       )
                     : const SizedBox.shrink(),
-                Flexible(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      borrowSlip!.status = "Đã trả";
-                      borrowSlip!.returnDate =
-                          "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
-                      FirebaseFirestore.instance
-                          .collection("BorrowSlip")
-                          .doc(borrowSlip!.borrowID)
-                          .update(borrowSlip!.toMap());
-                      Get.back();
-                    },
-                    child: const Text("Xác nhận"),
+                ElevatedButton(
+                  onPressed: () {
+                    borrowSlip!.status = "Đã trả";
+                    borrowSlip!.returnDate =
+                        "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+                    FirebaseFirestore.instance
+                        .collection("BorrowSlip")
+                        .doc(borrowSlip!.borrowID)
+                        .update(borrowSlip!.toMap());
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                  ),
+                  child: const Text(
+                    "Xác nhận",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -169,11 +216,17 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
               children: [
                 Text(
                   "$label:",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(value),
+                  child: Text(
+                    value,
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ),
               ],
             ),
@@ -265,12 +318,17 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
           .doc(damageDeviceList[index].deviceId)
           .collection("Device Detail")
           .doc(damageDeviceList[index].deviceDetailId);
-      damageDeviceList[index].deviceStatus = newViolate;
-      try{
-        await db.update(damageDeviceList[index].toMap());
-      }catch(e){
-        print(e);
-      }
+      await db.update(damageDeviceList[index].toMap());
+    }
+  }
+
+  Color getStatusColor(String? status) {
+    if (status == "Hỏng") {
+      return Colors.red;
+    } else if (status == "Đang mượn") {
+      return Colors.blue;
+    } else {
+      return Colors.black;
     }
   }
 }

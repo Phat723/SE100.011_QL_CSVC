@@ -28,7 +28,6 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
   InOutController inOutController = Get.put(InOutController());
   File? _selectedFiles;
   List<Map<String, dynamic>> data = [];
-
   @override
   void initState() {
     storeCode = detailController.generateInOutId();
@@ -51,7 +50,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   }
-                  if (snapshot.hasData) {
+                  if(snapshot.hasData){
                     List<DropdownMenuItem> deviceTypeItems = [];
                     for (var doc in snapshot.data!.docs) {
                       deviceTypeItems.add(
@@ -217,6 +216,19 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               //     }
               //   },
               // ),
+              ElevatedButton(
+                onPressed: () {
+                    setState(() {
+                      inOutController.items.add(DeviceDetail(
+                          deviceDetailId: "${detailController.deviceDetailNameController.text}detail_id",
+                          storeCode: storeCode,
+                          deviceDetailName: detailController.deviceDetailNameController.text,
+                          deviceStatus: "Disable", deviceId: "${deviceSelected}Device_id", deviceTypeId: "${deviceTypeSelected}Type_id"));
+                      detailController.deviceDetailNameController.clear();
+                    });
+                },
+                child: const Text('Add to list'),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(

@@ -14,12 +14,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     print(FirebaseAuth.instance.currentUser!.email.toString());
   }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-      ),
+    return const Scaffold(
+      body: Center(),
     );
   }
 }

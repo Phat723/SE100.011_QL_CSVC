@@ -23,21 +23,19 @@ class AuthController extends GetxController {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   // Future<void> loginUser() async {
   //   final user = await _auth.signInWithEmailAndPassword(
   //       email: loginEmailController.text,
   //       password: loginPasswordController.text);
-  //     //SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     //prefs.setString("userID", user.user!.uid);
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     prefs.setString("userID", user.user!.uid);
   //     print(user.user!.uid);
   // }
 
   Future<User?> loginUser(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
+          email: email, password: password)
       _firestore.collection('Client').doc(_auth.currentUser!.uid).get();
       print("Login Sucessfull");
 

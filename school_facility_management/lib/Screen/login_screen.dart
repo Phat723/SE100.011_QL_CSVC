@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/Navigator_Home_Screen.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
+import 'package:school_facility_management/Screen_user/user_home_screen.dart';
 import 'package:school_facility_management/my_button.dart';
 import '../Controllers/Auth_Controllers.dart';
 
@@ -206,17 +207,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          // authController
-                          // .loginUser('2409huynhphat@gmail.com', '123456').then((user) {
-                          //   print("Login Successfull");
-                          //   Navigator.pushAndRemoveUntil(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (_) => const DoctorNavBar()),
-                          //     (route) => false,
-                          //   );
-                          // });
-                          showWarmingDialog(context);
+                          authController
+                              .loginUser('2409huynhphat@gmail.com', '123456')
+                              .then((user) {
+                            print("Login Successfull");
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const UserHomeScreen()),
+                              (route) => false,
+                            );
+                          });
                         },
                         child: const Text(
                           "User",

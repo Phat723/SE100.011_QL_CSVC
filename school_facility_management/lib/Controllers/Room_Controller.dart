@@ -76,6 +76,7 @@ class RoomController extends GetxController{
         deviceName.deviceStatus = statusChange;
         currentRoom.devices!.add(deviceName.toMap());
 
+
         // Cập nhật lại tài liệu Room trên Firestore
         await roomRef.update(currentRoom.toMap());
 
