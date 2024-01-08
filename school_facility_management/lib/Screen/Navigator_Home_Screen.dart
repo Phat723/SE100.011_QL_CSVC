@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_facility_management/Screen/borrow_slip_management_screen.dart';
 import 'package:school_facility_management/Screen/create_borrow_slip_screen.dart';
-import 'package:school_facility_management/Screen/create_maintain_slip_screen.dart';
 import 'package:school_facility_management/Screen/create_report_screen.dart';
 import 'package:school_facility_management/Screen/device_type_management_screen.dart';
 import 'package:school_facility_management/Screen/in_out_management.dart';
@@ -9,11 +8,11 @@ import 'package:school_facility_management/Screen/report_management_screen.dart'
 import 'package:school_facility_management/Screen/room_management_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import 'package:school_facility_management/Screen/violate_management_screen.dart';
-import 'package:school_facility_management/UserModel/violate_model.dart';
 import '../CustomDrawer/drawer_user_controller.dart';
 import '../CustomDrawer/home_drawer.dart';
 import '../Model/AppTheme.dart';
 import 'home_screen.dart';
+import 'maintain_slip_management_screen.dart';
 class NavigatorHomeScreen extends StatefulWidget {
   const NavigatorHomeScreen({super.key});
 
@@ -43,7 +42,10 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
           backgroundColor: AppTheme.nearlyWhite,
           body: DrawerUserController(
             screenIndex: drawerIndex,
-            drawerWidth: MediaQuery.of(context).size.width * 0.6,
+            drawerWidth: MediaQuery
+                .of(context)
+                .size
+                .width * 0.6,
             onDrawerCall: (DrawerIndex drawerIndexdata) {
               changeIndex(drawerIndexdata);
             },
@@ -110,6 +112,7 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
           });
           break;
         case DrawerIndex.Maintain:
+          setState(() {
             screenView = const MaintainSlipManagementScreen();
           });
           break;
@@ -118,5 +121,4 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
       }
     }
   }
-
 }

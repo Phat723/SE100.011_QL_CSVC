@@ -35,7 +35,7 @@ class AuthController extends GetxController {
   Future<User?> loginUser(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password)
+          email: email, password: password);
       _firestore.collection('Client').doc(_auth.currentUser!.uid).get();
       print("Login Sucessfull");
 

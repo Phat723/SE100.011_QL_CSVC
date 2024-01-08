@@ -220,10 +220,12 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                 onPressed: () {
                     setState(() {
                       inOutController.items.add(DeviceDetail(
+                        deviceCost: '222',
+                          maintainTime: 15,
                           deviceDetailId: "${detailController.deviceDetailNameController.text}detail_id",
                           storeCode: storeCode,
                           deviceDetailName: detailController.deviceDetailNameController.text,
-                          deviceStatus: "Disable", deviceId: "${deviceSelected}Device_id", deviceTypeId: "${deviceTypeSelected}Type_id"));
+                          deviceStatus: "Disable", deviceId: "${deviceSelected}Device_id", deviceTypeId: "${deviceTypeSelected}Type_id", storingDay: ''));
                       detailController.deviceDetailNameController.clear();
                     });
                 },

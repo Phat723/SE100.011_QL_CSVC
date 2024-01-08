@@ -65,7 +65,8 @@ class _MaintainSlipManagementScreenState
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              Get.to(MaintainSlipInfo(receivedMaintainSlip: maintainList[index]));
+                              Get.to(MaintainSlipInfo(
+                                  receivedMaintainSlip: maintainList[index]));
                             },
                             child: Card(
                               margin: const EdgeInsets.only(bottom: 10),
@@ -74,113 +75,133 @@ class _MaintainSlipManagementScreenState
                               ),
                               elevation: 3,
                               child: ListTile(
-                                            title: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  maintainList[index].maintainID,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: getStatusColor(maintainList[index].maintainStatus),
-                                                    borderRadius: BorderRadius.circular(50),
-                                                  ),
-                                                  padding: const EdgeInsets.symmetric(
-                                                    vertical: 5.0,
-                                                    horizontal: 7.0,
-                                                  ),
-                                                  child: Text(
-                                                    maintainList[index].maintainStatus,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                
-                                                subtitle: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SizedBox(height: 8),
-                                                    Divider(),
-                                                    Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          const Text('Người Tạo:', style: AppTheme.body1),
-                                                          Text(
-                                                            maintainList[index].creatorName,
-                                                            style: AppTheme.title,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    const SizedBox(height: 8),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        const Text('Ngày Tạo: ', style: AppTheme.body1),
-                                                        Text(
-                                                            DateFormat('dd/MM/yyyy').format(
-                                                              maintainList[index].createDay.toDate(),
-                                                            ) +
-                                                            " - " +
-                                                            DateFormat('HH:mm').format(
-                                                              maintainList[index].createDay.toDate(),
-                                                            ),
-                                                            style: const TextStyle(color: Colors.blue),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 8,),
-                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        const Text('Ngày Kết Thúc: ', style: AppTheme.body1),
-                                                        Text(
-                                                            DateFormat('dd/MM/yyyy').format(
-                                                              maintainList[index].finishDay.toDate(),
-                                                            ) +
-                                                            " - " +
-                                                            DateFormat('HH:mm').format(
-                                                              maintainList[index].finishDay.toDate(),
-                                                            ),
-                                                            style: const TextStyle(color: Colors.blue,),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      maintainList[index].maintainID,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: getStatusColor(
+                                            maintainList[index].maintainStatus),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0,
+                                        horizontal: 7.0,
+                                      ),
+                                      child: Text(
+                                        maintainList[index].maintainStatus,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                                subtitle: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 8),
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Người Tạo:',
+                                            style: AppTheme.body1),
+                                        Text(
+                                          maintainList[index].creatorName,
+                                          style: AppTheme.title,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Ngày Tạo: ',
+                                            style: AppTheme.body1),
+                                        Text(
+                                          DateFormat('dd/MM/yyyy').format(
+                                                maintainList[index]
+                                                    .createDay
+                                                    .toDate(),
+                                              ) +
+                                              " - " +
+                                              DateFormat('HH:mm').format(
+                                                maintainList[index]
+                                                    .createDay
+                                                    .toDate(),
+                                              ),
+                                          style: const TextStyle(
+                                              color: Colors.blue),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Ngày Kết Thúc: ',
+                                            style: AppTheme.body1),
+                                        Text(
+                                          DateFormat('dd/MM/yyyy').format(
+                                                maintainList[index]
+                                                    .finishDay
+                                                    .toDate(),
+                                              ) +
+                                              " - " +
+                                              DateFormat('HH:mm').format(
+                                                maintainList[index]
+                                                    .finishDay
+                                                    .toDate(),
+                                              ),
+                                          style: const TextStyle(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
-                  Color getStatusColor(String maintainStatus) {
-                    switch (maintainStatus) {
-                      case 'Đang bảo trì':
-                        return Colors.redAccent;
-                      case 'Hoàn thành':
-                        return Colors.greenAccent;
-                      default:
-                        return Colors.black; // Default color
-                    }
-                  }
-                }
+  Color getStatusColor(String maintainStatus) {
+    switch (maintainStatus) {
+      case 'Đang bảo trì':
+        return Colors.redAccent;
+      case 'Hoàn thành':
+        return Colors.greenAccent;
+      default:
+        return Colors.black; // Default color
+    }
+  }
+}
