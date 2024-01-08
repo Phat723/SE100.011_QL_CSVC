@@ -1,5 +1,8 @@
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:excel/excel.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
@@ -18,11 +21,13 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
   String? deviceTypeSelected;
   String? deviceSelected;
   String storeCode = '';
-  CollectionReference deviceTypeStream = FirebaseFirestore.instance.collection('DevicesType');
+  CollectionReference deviceTypeStream =
+      FirebaseFirestore.instance.collection('DevicesType');
   CollectionReference? deviceStream;
   DeviceDetailController detailController = Get.put(DeviceDetailController());
   InOutController inOutController = Get.put(InOutController());
-
+  File? _selectedFiles;
+  List<Map<String, dynamic>> data = [];
   @override
   void initState() {
     storeCode = detailController.generateInOutId();
@@ -58,7 +63,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                     return Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.black12)),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DropdownButton(
@@ -73,7 +78,9 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                             setState(() {
                               deviceTypeSelected = value!;
                               deviceSelected = null;
-                              deviceStream = deviceTypeStream.doc(value).collection("Devices");
+                              deviceStream = deviceTypeStream
+                                  .doc(value)
+                                  .collection("Devices");
                             });
                           },
                         ),
@@ -94,7 +101,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                     return const Text('Something went wrong');
                   }
                   List<DropdownMenuItem> deviceTypeItems = [];
-                  if(snapshot.hasData){
+                  if (snapshot.hasData) {
                     for (var doc in snapshot.data!.docs) {
                       deviceTypeItems.add(
                         DropdownMenuItem(
@@ -104,31 +111,31 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                       );
                     }
                   }
-                    return Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.black12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DropdownButton(
-                          isExpanded: true,
-                          hint: DropdownMenuItem(
-                            value: deviceSelected,
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Devices"),
-                            ),
-                          ),
+                  return Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButton(
+                        isExpanded: true,
+                        hint: DropdownMenuItem(
                           value: deviceSelected,
-                          items: deviceTypeItems,
-                          onChanged: (value) {
-                            setState(() {
-                              deviceSelected = value!;
-                            });
-                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text("Devices"),
+                          ),
                         ),
+                        value: deviceSelected,
+                        items: deviceTypeItems,
+                        onChanged: (value) {
+                          setState(() {
+                            deviceSelected = value!;
+                          });
+                        },
                       ),
-                    );
+                    ),
+                  );
                 },
               ),
               const SizedBox(
@@ -151,6 +158,64 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               const SizedBox(
                 height: 20,
               ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(onPressed: (){
+                      readExcelFile();
+                    }, child: Text('Add Excel file')),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        inOutController.items.add(
+                          DeviceDetail(
+                            deviceDetailId:
+                                "${detailController.deviceDetailNameController.text}detail_id",
+                            storeCode: storeCode,
+                            deviceDetailName:
+                                detailController.deviceDetailNameController.text,
+                            deviceStatus: "Disable",
+                            deviceId: "${deviceSelected}Device_id",
+                            deviceTypeId: "${deviceTypeSelected}Type_id",
+                            deviceCost: "10000",
+                            maintainTime: 2,
+                            storingDay: DateTime.now().toString(),
+                          ),
+                        );
+                        detailController.deviceDetailNameController.clear();
+                      });
+                    },
+                    child: const Text('Add to list'),
+                  ),
+                ],
+              ),
+              // FutureBuilder(
+              //   initialData: data,
+              //   future: null,
+              //   builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+              //     if (snapshot.connectionState == ConnectionState.waiting) {
+              //       return CircularProgressIndicator();
+              //     } else {
+              //       return DataTable(
+              //         columns: const [
+              //           DataColumn(label: Text('Tên thiết bị')),
+              //           DataColumn(label: Text('Giá tiền')),
+              //           DataColumn(label: Text('Ngày nhập')),
+              //           // Thêm các cột khác tương tự
+              //         ],
+              //         rows: snapshot.data!.map((row) {
+              //           return DataRow(cells: [
+              //             DataCell(Text(row['deviceDetailId'].toString())),
+              //             DataCell(Text(row['deviceCost'].toString())),
+              //             DataCell(Text(row['storingDay'].toString())),
+              //             // Thêm các ô dữ liệu khác tương tự
+              //           ]);
+              //         }).toList(),
+              //       );
+              //     }
+              //   },
+              // ),
               ElevatedButton(
                 onPressed: () {
                     setState(() {
@@ -171,7 +236,6 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.black12),
                   ),
                   child: SingleChildScrollView(
                     child: DataTable(
@@ -198,11 +262,13 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                           cells: [
                             DataCell(
                               Text(
-                                inOutController.items[index].toMap()['DeviceDetail Name'],
-                                  overflow: TextOverflow.visible,
-                                ),
+                                inOutController.items[index]
+                                    .toMap()['DeviceDetail Name'],
+                                overflow: TextOverflow.visible,
+                              ),
                             ),
-                            DataCell(Text(inOutController.items[index].toMap()['RoomId'])),
+                            DataCell(Text(inOutController.items[index]
+                                .toMap()['RoomId'])),
                             DataCell(
                               IconButton(
                                 icon: const Icon(Icons.delete),
@@ -221,7 +287,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: (){
+                onPressed: () {
                   inOutController.inputSlipToFirebase();
                   Get.back();
                 },
@@ -232,6 +298,50 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
         ),
       ),
     );
+  }
+  Future<void> pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+    if (result != null) {
+      setState(() {
+        _selectedFiles = File(result.files.single.path!);
+      });
+    }
+  }
 
+  Future<void> readExcelFile() async{
+    await pickFile();
+    String file = _selectedFiles!.path;
+    var bytes = File(file).readAsBytesSync();
+    var excel = Excel.decodeBytes(bytes);
+    var table = excel.tables.keys.first;
+    Sheet sheet = excel.tables[table]!;
+    String storeId = detailController.generateInOutId();
+    inOutController.generateInputSlip(storeId, 'Mua mới');
+    var myRows = excel.tables[table]?.rows;
+     for(int i = 1; i < myRows!.length; i++){
+       print(sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i)).value);
+       data.add({
+           "DeviceDetail Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i)).value.toString(),
+           "Device Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i)).value.toString(),
+           "DeviceType Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i)).value.toString(),
+           "AreaId": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i)).value.toString(),
+           "RoomId": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: i)).value.toString(),
+           "StoreCode": storeCode,
+           "DeviceDetail Name": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: i)).value.toString(),
+           "DeviceDetail Status": 'Sẵn dùng',
+           "DeviceDetail Owner": '',
+           "DeviceDetail Cost": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: i)).value.toString(),
+           "DeviceDetail MaintainTime": int.parse(sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i)).value.toString()),
+           "DeviceDetail StoringDay": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: i)).value.toString(),
+       });
+     }
+     inOutController.items = List.generate(data.length, (index) => DeviceDetail.fromMap(data[index]));
+     data.clear();
+     _selectedFiles = null;
+    setState(() {});
   }
 }

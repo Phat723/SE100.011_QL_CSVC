@@ -17,12 +17,17 @@ class BorrowSlipInfo extends StatefulWidget {
 
 class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
   BorrowSlip? borrowSlip;
+  List<String> selectedBorrowDeviceList = [];
   List<String> damageDeviceNameList = [];
   List<DeviceDetail> damageDeviceList = [];
+  List<DocumentSnapshot> documents = [];
+  String newViolate = '';
+
 
   @override
   void initState() {
     borrowSlip = widget.receivedBorrowSlip;
+    //selectedBorrowDeviceList = List.generate(borrowSlip!.borrowDevices.length, (index) => borrowSlip!.borrowDevices[index]);
     super.initState();
   }
 
@@ -229,7 +234,82 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
         : const SizedBox.shrink();
   }
 
+  showViolateDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(color: Colors.black, width: 2.0)),
+          elevation: 2,
+          title: const Text("Danh mục hư hại"),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("ViolateType")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        documents = snapshot.data!.docs;
+                      }
+                      // Lấy danh sách tên từ documents
+                      List<String> violateNameList = documents
+                          .map((doc) => doc.get('Violate Name') as String)
+                          .toList();
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: violateNameList.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: GestureDetector(
+                                      onTap: () {
+                                        setState((){
+                                          newViolate = violateNameList[index];
+                                        });
+                                      },
+                                      child: Text(
+                                        violateNameList[index],
+                                        style: TextStyle(
+                                          color: (newViolate == violateNameList[index])?Colors.green:Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Xác nhận loại vi phạm'),
+              onPressed: () {},
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> confirmBroken() async {
+    await showViolateDialog();
     for (int index = 0; index < damageDeviceList.length; index++) {
       var db = FirebaseFirestore.instance
           .collection("DevicesType")

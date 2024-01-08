@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
-
+import 'package:school_facility_management/Model/theme.dart';
 class AddDeviceDetail extends StatefulWidget {
   const AddDeviceDetail({super.key});
 

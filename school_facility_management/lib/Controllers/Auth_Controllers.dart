@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +23,6 @@ class AuthController extends GetxController {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   // Future<void> loginUser() async {
   //   final user = await _auth.signInWithEmailAndPassword(
   //       email: loginEmailController.text,
@@ -34,8 +35,7 @@ class AuthController extends GetxController {
   Future<User?> loginUser(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
+          email: email, password: password)
       _firestore.collection('Client').doc(_auth.currentUser!.uid).get();
       print("Login Sucessfull");
 

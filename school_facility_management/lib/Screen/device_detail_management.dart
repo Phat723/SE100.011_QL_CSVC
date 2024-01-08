@@ -224,16 +224,30 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
     if (receivedDevice!.deviceTypeId.isNotEmpty &&
         receivedDevice!.deviceId.isNotEmpty) {
       DeviceDetail myDeviceDetail = DeviceDetail(
-          deviceDetailId:
-              "${detailController.deviceDetailNameController.text}_detail_id",
-          roomId: detailController.roomId.value,
-          areaId: detailController.areaId.value,
-          storeCode: detailController.storeCodeController.text,
-          deviceDetailName: detailController.deviceDetailNameController.text,
-          deviceStatus: 'Sẵn dùng',
-          deviceOwner: detailController.deviceOwnerController.text,
-          deviceId: receivedDevice!.deviceId,
-          deviceTypeId: receivedDevice!.deviceTypeId);
+        deviceDetailId:
+            "${detailController.deviceDetailNameController.text}_detail_id",
+        roomId: detailController.roomId.value,
+        areaId: detailController.areaId.value,
+        storeCode: detailController.storeCodeController.text,
+        deviceDetailName: detailController.deviceDetailNameController.text,
+        deviceStatus: "Sẵn dùng",
+        deviceOwner: detailController.deviceOwnerController.text,
+        deviceId: receivedDevice!.deviceId,
+        deviceTypeId: receivedDevice!.deviceTypeId,
+        deviceCost: 200000.toString(),
+        maintainTime: 15,
+        storingDay: DateTime.now().toString(),
+      );
+          // deviceDetailId:
+          //     "${detailController.deviceDetailNameController.text}_detail_id",
+          // roomId: detailController.roomId.value,
+          // areaId: detailController.areaId.value,
+          // storeCode: detailController.storeCodeController.text,
+          // deviceDetailName: detailController.deviceDetailNameController.text,
+          // deviceStatus: 'Sẵn dùng',
+          // deviceOwner: detailController.deviceOwnerController.text,
+          // deviceId: receivedDevice!.deviceId,
+          // deviceTypeId: receivedDevice!.deviceTypeId);
       if (detailController.deviceDetailNameController.text != '') {
         final db = dvDetailDb!.collection("Device Detail").doc(
             "${detailController.deviceDetailNameController.text}_detail_id");
@@ -297,11 +311,10 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
                     .doc(deletedDevice["DeviceDetail Id"])
                     .delete();
                 setState(() {
-                  deviceDetailItems.remove(deletedDevice);
+                  deviceDetailItems.remove(DeviceDetail.fromMap(deletedDevice));
                   roomController.deleteDeviceFromRoom(
                       deletedDevice["AreaId"],
-                      deletedDevice["RoomId"],
-                      deletedDevice["DeviceDetail Name"]);
+                      deletedDevice["RoomId"],DeviceDetail.fromMap(deletedDevice));
                 });
                 Navigator.of(context).pop();
               },

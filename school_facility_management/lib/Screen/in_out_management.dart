@@ -47,17 +47,18 @@ class _IoManagementState extends State<IoManagement> {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: ioLogDb.snapshots(),
                   builder: (context, snapshot) {
-                    if(snapshot.hasError){
+                    if (snapshot.hasError) {
                       return const Text("Something worng happen");
                     }
-                    if(snapshot.connectionState == ConnectionState.waiting){
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     }
-                    for(var data in snapshot.data!.docs){
+                    for (var data in snapshot.data!.docs) {
                       listIo.add(InOutLog.fromSnapshot(data));
                     }
                     return ListView.separated(
-                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
                       shrinkWrap: true,
                       itemCount: listIo.length,
                       itemBuilder: (context, index) => Container(
@@ -71,19 +72,36 @@ class _IoManagementState extends State<IoManagement> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Phiếu nhập xuất", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                              const Text(
+                                "Phiếu nhập xuất",
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
                               const Divider(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(listIo[index].createCase,),
-                                  Text(listIo[index].createType, style: TextStyle(color: (listIo[index].createType == 'Input Slip')?Colors.green:Colors.red),),
+                                  Text(
+                                    listIo[index].createCase,
+                                  ),
+                                  Text(
+                                    listIo[index].createType,
+                                    style: TextStyle(
+                                        color: (listIo[index].createType ==
+                                                'Input Slip')
+                                            ? Colors.green
+                                            : Colors.red),
+                                  ),
                                 ],
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Người tạo: ${listIo[index].creatorName}'??''),
+                                  Text(
+                                      'Người tạo: ${listIo[index].creatorName}' ??
+                                          ''),
                                   Text('Ngày tạo: ${listIo[index].createDay}'),
                                 ],
                               )

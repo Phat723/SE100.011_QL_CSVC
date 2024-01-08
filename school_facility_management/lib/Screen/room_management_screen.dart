@@ -7,7 +7,6 @@ import 'package:school_facility_management/UserModel/room_model.dart';
 
 class RoomManagementScreen extends StatefulWidget {
   const RoomManagementScreen({Key? key}) : super(key: key);
-
   @override
   State<RoomManagementScreen> createState() => _RoomManagementScreenState();
 }
@@ -19,7 +18,6 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
   TextEditingController floorController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   Room? selectedRoom;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +147,6 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                                 ),
                               );
                             }
-
                             bool canDeleteRoom = rooms[index].devices!.isEmpty;
                             return Stack(
                               children: [
@@ -245,7 +242,6 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
     roomNameController.text = existingRoom?.roomName ?? '';
     floorController.text = existingRoom?.floor ?? '';
     descriptionController.text = existingRoom?.description ?? '';
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -268,6 +264,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
             builder: (BuildContext context, StateSetter setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
+
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // RoomID input
