@@ -20,14 +20,30 @@ class AuthController extends GetxController {
   final nameController = TextEditingController();
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> loginUser() async {
-    final user = await _auth.signInWithEmailAndPassword(
-        email: loginEmailController.text,
-        password: loginPasswordController.text);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("userID", user.user!.uid);
-      print(user.user!.uid);
+  // Future<void> loginUser() async {
+  //   final user = await _auth.signInWithEmailAndPassword(
+  //       email: loginEmailController.text,
+  //       password: loginPasswordController.text);
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     prefs.setString("userID", user.user!.uid);
+  //     print(user.user!.uid);
+  // }
+
+  Future<User?> loginUser(String email, String password) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      _firestore.collection('Client').doc(_auth.currentUser!.uid).get();
+      print("Login Sucessfull");
+
+      return userCredential.user;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   static Future<void> logoutUser() async {
@@ -37,11 +53,12 @@ class AuthController extends GetxController {
     Get.offAll(const LoginScreen());
   }
 
-  static Future<MyUser> getUserDetail(String id) async{
+  static Future<MyUser> getUserDetail(String id) async {
     final snapshot = await _db.collection("Client").doc(id).get();
     return MyUser.fromSnapShot(snapshot);
   }
-  Future<MyUser?> getCurrentUserInfo() async{
+
+  Future<MyUser?> getCurrentUserInfo() async {
     String id = FirebaseAuth.instance.currentUser!.uid;
     MyUser? myUser;
     await FirebaseFirestore.instance
@@ -49,9 +66,8 @@ class AuthController extends GetxController {
         .doc(id)
         .get()
         .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
-       myUser = MyUser.fromSnapShot(snapshot);
+      myUser = MyUser.fromSnapShot(snapshot);
     });
     return myUser;
   }
-
 }
