@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
+import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/UserModel/borrow_slip_model.dart';
+import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 import '../UserModel/room_model.dart';
 
 class CreateBorrowSlipScreen extends StatefulWidget {
@@ -27,6 +29,7 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
   List<Map<String, dynamic>> borrowDeviceSelectedList = [];
   TextEditingController borrowDayController = TextEditingController();
   TextEditingController returnDayController = TextEditingController();
+  RoomController roomController = Get.put(RoomController());
   DateTime selectedDate = DateTime.now();
 
   @override
@@ -317,6 +320,11 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                   await authController.getCurrentUserInfo().then((value) {
                     creatorName = value!.email;
                   });
+                  for(Map<String, dynamic> device in borrowDeviceSelectedList){
+                    device['DeviceDetail Status'] = "Đang được mượn";
+                    var myDevice = DeviceDetail.fromMap(device);
+                    roomController.updateStatusDevice(selectedRoom!.areaId, selectedRoom!.roomId, myDevice, myDevice.deviceStatus);
+                  }
                   BorrowSlip newBorrowSlip = BorrowSlip(
                     borrowID: borrowID,
                     borrowDate: borrowDayController.text,

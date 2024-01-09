@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:school_facility_management/Screen/borrow_slip_management_screen.dart';
 import 'package:school_facility_management/Screen/create_borrow_slip_screen.dart';
+import 'package:school_facility_management/Screen/create_maintain_slip_screen.dart';
 import 'package:school_facility_management/Screen/create_report_screen.dart';
 import 'package:school_facility_management/Screen/device_type_management_screen.dart';
 import 'package:school_facility_management/Screen/in_out_management.dart';
+import 'package:school_facility_management/Screen/maintain_management_screen.dart';
 import 'package:school_facility_management/Screen/report_management_screen.dart';
 import 'package:school_facility_management/Screen/room_management_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
@@ -109,6 +111,11 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
         case DrawerIndex.Broken:
           setState(() {
             screenView = const ViolateManagement();
+          });
+          break;
+        case DrawerIndex.CreateMaintain:
+          setState(() {
+            screenView = const CreateMaintainSlip();
           });
           break;
         case DrawerIndex.Maintain:

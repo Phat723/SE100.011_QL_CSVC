@@ -87,7 +87,7 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
                       ),
                       onPressed: () async {
                         await Get.to(const AddDeviceDetail());
-                        addDeviceDetail();
+                        await addDeviceDetail();
                         detailController.clearData();
                       },
                     ))
@@ -220,7 +220,7 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
     );
   }
 
-  void addDeviceDetail() async {
+  Future<void> addDeviceDetail() async {
     if (receivedDevice!.deviceTypeId.isNotEmpty &&
         receivedDevice!.deviceId.isNotEmpty) {
       DeviceDetail myDeviceDetail = DeviceDetail(
@@ -238,16 +238,6 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
         maintainTime: 15,
         storingDay: DateTime.now().toString(),
       );
-          // deviceDetailId:
-          //     "${detailController.deviceDetailNameController.text}_detail_id",
-          // roomId: detailController.roomId.value,
-          // areaId: detailController.areaId.value,
-          // storeCode: detailController.storeCodeController.text,
-          // deviceDetailName: detailController.deviceDetailNameController.text,
-          // deviceStatus: 'Sẵn dùng',
-          // deviceOwner: detailController.deviceOwnerController.text,
-          // deviceId: receivedDevice!.deviceId,
-          // deviceTypeId: receivedDevice!.deviceTypeId);
       if (detailController.deviceDetailNameController.text != '') {
         final db = dvDetailDb!.collection("Device Detail").doc(
             "${detailController.deviceDetailNameController.text}_detail_id");

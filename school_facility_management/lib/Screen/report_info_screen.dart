@@ -113,7 +113,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                       DocumentReference docRef = FirebaseFirestore.instance.collection("Report").doc(report!.reportId);
                       report!.status = "Đã xử lý";
                       DeviceDetail deviceDetail = DeviceDetail.fromMap(report!.deviceDetail);
-                      roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, report!.status);
+                      roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, 'Sẵn dùng');
                       docRef.update(report!.toMap());
                       Get.back();
                     }, child: const Text("Đã Xử Lý")),

@@ -82,6 +82,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: const Icon(Icons.room),
       ),
       DrawerList(
+        index: DrawerIndex.CreateMaintain,
+        labelName: 'Tạo Bảo Trì',
+        icon: const Icon(Icons.accessibility),
+      ),
+      DrawerList(
         index: DrawerIndex.Maintain,
         labelName: 'Bảo Trì',
         icon: const Icon(Icons.add),
@@ -328,6 +333,7 @@ enum DrawerIndex {
   BorrowManagement,
   Broken,
   Room,
+  CreateMaintain,
   Maintain,
 
 }

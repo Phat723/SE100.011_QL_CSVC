@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
 import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 import 'package:school_facility_management/UserModel/room_model.dart';
 
 class RoomController extends GetxController{
   static RoomController get instance => Get.find();
-
+  DeviceDetailController detailController = Get.put(DeviceDetailController());
   Future<void> addDeviceToRoom(String areaId, String roomId, Map<String, dynamic> deviceName) async{
     try {
       // Lấy tham chiếu đến tài liệu Room cần cập nhật
@@ -61,7 +62,7 @@ class RoomController extends GetxController{
       print('Lỗi khi cập nhật danh sách thiết bị và lưu lên Firestore: $e');
     }
   }
-  Future<void> updateStatusDevice(String areaId, String roomId, DeviceDetail deviceName, String statusChange) async {
+  Future<void> updateStatusDevice(String areaId, String roomId, DeviceDetail device, String statusChange) async {
     try {
       // Lấy tham chiếu đến tài liệu Room cần cập nhật
       DocumentReference roomRef = FirebaseFirestore.instance.collection('Area').doc(areaId).collection("Room").doc(roomId);
@@ -71,12 +72,10 @@ class RoomController extends GetxController{
       if (roomSnapshot.exists) {
         // Chuyển dữ liệu từ Firestore thành đối tượng Room
         Room currentRoom = Room.fromMap(roomSnapshot.data() as Map<String, dynamic>);
-
-        currentRoom.devices!.removeWhere((element) => element['DeviceDetail Id'] == deviceName.deviceDetailId);
-        deviceName.deviceStatus = statusChange;
-        currentRoom.devices!.add(deviceName.toMap());
-
-
+        currentRoom.devices!.removeWhere((element) => element['DeviceDetail Id'] == device.deviceDetailId);
+        device.deviceStatus = statusChange;
+        detailController.upDateDeviceDetail(device);
+        currentRoom.devices!.add(device.toMap());
         // Cập nhật lại tài liệu Room trên Firestore
         await roomRef.update(currentRoom.toMap());
 

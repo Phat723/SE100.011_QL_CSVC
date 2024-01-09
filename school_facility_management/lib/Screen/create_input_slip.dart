@@ -28,6 +28,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
   InOutController inOutController = Get.put(InOutController());
   File? _selectedFiles;
   List<Map<String, dynamic>> data = [];
+
   @override
   void initState() {
     storeCode = detailController.generateInOutId();
@@ -50,7 +51,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   }
-                  if(snapshot.hasData){
+                  if (snapshot.hasData) {
                     List<DropdownMenuItem> deviceTypeItems = [];
                     for (var doc in snapshot.data!.docs) {
                       deviceTypeItems.add(
@@ -62,7 +63,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                     }
                     return Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -113,7 +114,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                   }
                   return Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -161,9 +162,11 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(onPressed: (){
-                      readExcelFile();
-                    }, child: Text('Add Excel file')),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          readExcelFile();
+                        },
+                        child: Text('Add Excel file')),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -173,8 +176,8 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                             deviceDetailId:
                                 "${detailController.deviceDetailNameController.text}detail_id",
                             storeCode: storeCode,
-                            deviceDetailName:
-                                detailController.deviceDetailNameController.text,
+                            deviceDetailName: detailController
+                                .deviceDetailNameController.text,
                             deviceStatus: "Disable",
                             deviceId: "${deviceSelected}Device_id",
                             deviceTypeId: "${deviceTypeSelected}Type_id",
@@ -218,16 +221,21 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               // ),
               ElevatedButton(
                 onPressed: () {
-                    setState(() {
-                      inOutController.items.add(DeviceDetail(
+                  setState(() {
+                    inOutController.items.add(DeviceDetail(
                         deviceCost: '222',
-                          maintainTime: 15,
-                          deviceDetailId: "${detailController.deviceDetailNameController.text}detail_id",
-                          storeCode: storeCode,
-                          deviceDetailName: detailController.deviceDetailNameController.text,
-                          deviceStatus: "Disable", deviceId: "${deviceSelected}Device_id", deviceTypeId: "${deviceTypeSelected}Type_id", storingDay: ''));
-                      detailController.deviceDetailNameController.clear();
-                    });
+                        maintainTime: 15,
+                        deviceDetailId:
+                            "${detailController.deviceDetailNameController.text}detail_id",
+                        storeCode: storeCode,
+                        deviceDetailName:
+                            detailController.deviceDetailNameController.text,
+                        deviceStatus: "Disable",
+                        deviceId: "${deviceSelected}Device_id",
+                        deviceTypeId: "${deviceTypeSelected}Type_id",
+                        storingDay: ''));
+                    detailController.deviceDetailNameController.clear();
+                  });
                 },
                 child: const Text('Add to list'),
               ),
@@ -301,22 +309,26 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
       ),
     );
   }
+
   Future<void> pickFile() async {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['xlsx'],
     );
-    if (result != null) {
-      setState(() {
-        _selectedFiles = File(result.files.single.path!);
-      });
-    }
+    if (result == null) return;
+
+    setState(() {
+      _selectedFiles = File(result.files.first.path!);
+    });
   }
 
-  Future<void> readExcelFile() async{
-    await pickFile();
-    String file = _selectedFiles!.path;
+  Future<void> readExcelFile() async {
+    pickFile();
+    String file = '';
+    if(_selectedFiles != null){
+      file = _selectedFiles!.path;
+    }
     var bytes = File(file).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
     var table = excel.tables.keys.first;
@@ -324,26 +336,55 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
     String storeId = detailController.generateInOutId();
     inOutController.generateInputSlip(storeId, 'Mua mới');
     var myRows = excel.tables[table]?.rows;
-     for(int i = 1; i < myRows!.length; i++){
-       print(sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i)).value);
-       data.add({
-           "DeviceDetail Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i)).value.toString(),
-           "Device Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i)).value.toString(),
-           "DeviceType Id": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i)).value.toString(),
-           "AreaId": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i)).value.toString(),
-           "RoomId": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: i)).value.toString(),
-           "StoreCode": storeCode,
-           "DeviceDetail Name": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: i)).value.toString(),
-           "DeviceDetail Status": 'Sẵn dùng',
-           "DeviceDetail Owner": '',
-           "DeviceDetail Cost": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: i)).value.toString(),
-           "DeviceDetail MaintainTime": int.parse(sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i)).value.toString()),
-           "DeviceDetail StoringDay": sheet.cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: i)).value.toString(),
-       });
-     }
-     inOutController.items = List.generate(data.length, (index) => DeviceDetail.fromMap(data[index]));
-     data.clear();
-     _selectedFiles = null;
+    for (int i = 1; i < myRows!.length; i++) {
+      print(sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i))
+          .value);
+      data.add({
+        "DeviceDetail Id": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i))
+            .value
+            .toString(),
+        "Device Id": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i))
+            .value
+            .toString(),
+        "DeviceType Id": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i))
+            .value
+            .toString(),
+        "AreaId": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i))
+            .value
+            .toString(),
+        "RoomId": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: i))
+            .value
+            .toString(),
+        "StoreCode": storeCode,
+        "DeviceDetail Name": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: i))
+            .value
+            .toString(),
+        "DeviceDetail Status": 'Sẵn dùng',
+        "DeviceDetail Owner": '',
+        "DeviceDetail Cost": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: i))
+            .value
+            .toString(),
+        "DeviceDetail MaintainTime": int.parse(sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i))
+            .value
+            .toString()),
+        "DeviceDetail StoringDay": sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: i))
+            .value
+            .toString(),
+      });
+    }
+    inOutController.items = List.generate(
+        data.length, (index) => DeviceDetail.fromMap(data[index]));
+    data.clear();
     setState(() {});
   }
 }

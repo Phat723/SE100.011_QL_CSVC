@@ -128,14 +128,12 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                                       bool isAdding =
                                           selected != null && selected;
                                       if (isAdding) {
-                                        deviceItem.deviceStatus = "Hỏng";
                                         borrowSlip!.borrowDevices[index] =
                                             deviceItem.toMap();
                                         damageDeviceList.add(deviceItem);
                                         damageDeviceNameList.add(
                                             deviceItem.deviceDetailName);
                                       } else {
-                                        deviceItem.deviceStatus = "Đang mượn";
                                         borrowSlip!.borrowDevices[index] =
                                             deviceItem.toMap();
                                         FirebaseFirestore.instance
@@ -300,7 +298,9 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
           actions: <Widget>[
             TextButton(
               child: const Text('Xác nhận loại vi phạm'),
-              onPressed: () {},
+              onPressed: () {
+
+              },
             ),
           ],
         );
