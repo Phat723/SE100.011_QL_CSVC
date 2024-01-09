@@ -127,7 +127,7 @@ class _BorrowSlipManagementScreenState
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 const Text("Người Tạo:",style: AppTheme.body1,),
-                                                Text(borrowList[index].creatorEmail, style: AppTheme.title,),
+                                                SizedBox(width: 250, child: Text(borrowList[index].creatorEmail, style: AppTheme.title, overflow: TextOverflow.ellipsis,)),
                                               ],
                                             ),
                                             Row(

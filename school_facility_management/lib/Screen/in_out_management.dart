@@ -99,9 +99,12 @@ class _IoManagementState extends State<IoManagement> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                      'Người tạo: ${listIo[index].creatorName}' ??
-                                          ''),
+                                  SizedBox(
+                                    width: 250,
+                                    child: Text(
+                                        'Người tạo: ${listIo[index].creatorName}' ??
+                                            '', overflow: TextOverflow.ellipsis,),
+                                  ),
                                   Text('Ngày tạo: ${listIo[index].createDay}'),
                                 ],
                               )

@@ -9,6 +9,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  final items = [
+  Image.asset('assets/slide_1.jpg', fit: BoxFit.cover),
+  Image.asset('assets/slide_1.jpg', fit: BoxFit.cover),
+  Image.asset('assets/slide_1.jpg', fit: BoxFit.cover),
+];
+
+int currentIndex = 0;
   @override
   void initState() {
     super.initState();
