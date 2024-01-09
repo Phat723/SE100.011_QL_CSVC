@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/borrow_slip_model.dart';
@@ -16,6 +17,7 @@ class BorrowSlipInfo extends StatefulWidget {
 }
 
 class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
+  RoomController roomController = Get.put(RoomController());
   BorrowSlip? borrowSlip;
   List<String> selectedBorrowDeviceList = [];
   List<String> damageDeviceNameList = [];
@@ -166,9 +168,7 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
               children: [
                 borrowSlip!.status == "Chưa trả"
                     ? ElevatedButton(
-                        onPressed: () => confirmBroken().whenComplete(() =>
-                            Get.snackbar("Thông báo",
-                                "Thay đổi dữ liệu thành công")),
+                        onPressed: () => showViolateDialog(),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
                         ),
@@ -180,14 +180,30 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
                     : const SizedBox.shrink(),
                 ElevatedButton(
                   onPressed: () {
-                    borrowSlip!.status = "Đã trả";
-                    borrowSlip!.returnDate =
-                        "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
-                    FirebaseFirestore.instance
-                        .collection("BorrowSlip")
-                        .doc(borrowSlip!.borrowID)
-                        .update(borrowSlip!.toMap());
-                    Get.back();
+                    if (borrowSlip!.status != 'Đã trả') {
+                      for(int index = 0; index < borrowSlip!.borrowDevices.length; index++){
+                        DeviceDetail device = DeviceDetail.fromMap(borrowSlip!.borrowDevices[index]);
+                        if(damageDeviceNameList.contains(device.deviceDetailName)){
+                          device.deviceStatus = newViolate;
+                          roomController.updateStatusDevice(device.areaId, device.roomId, device, device.deviceStatus);
+                        }else{
+                          device.deviceStatus = 'Sẵn dùng';
+                          roomController.updateStatusDevice(device.areaId, device.roomId, device, device.deviceStatus);
+                        }
+                        borrowSlip!.borrowDevices[index] = device.toMap();
+                      }
+                      borrowSlip!.status = "Đã trả";
+                      borrowSlip!.returnDate =
+                          "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+                      FirebaseFirestore.instance
+                          .collection("BorrowSlip")
+                          .doc(borrowSlip!.borrowID)
+                          .update(borrowSlip!.toMap());
+                      Get.back();
+                    }
+                    else{
+                      Get.back();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.blue,
@@ -204,7 +220,6 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
       ),
     );
   }
-
   Widget _buildInfoItem(String label, String? value) {
     return value != null
         ? Padding(
@@ -299,27 +314,13 @@ class _BorrowSlipInfoState extends State<BorrowSlipInfo> {
             TextButton(
               child: const Text('Xác nhận loại vi phạm'),
               onPressed: () {
-
+                Navigator.pop(context);
               },
             ),
           ],
         );
       },
     );
-  }
-
-  Future<void> confirmBroken() async {
-    await showViolateDialog();
-    for (int index = 0; index < damageDeviceList.length; index++) {
-      var db = FirebaseFirestore.instance
-          .collection("DevicesType")
-          .doc(damageDeviceList[index].deviceTypeId)
-          .collection("Devices")
-          .doc(damageDeviceList[index].deviceId)
-          .collection("Device Detail")
-          .doc(damageDeviceList[index].deviceDetailId);
-      await db.update(damageDeviceList[index].toMap());
-    }
   }
 
   Color getStatusColor(String? status) {

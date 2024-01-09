@@ -1,12 +1,19 @@
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
 import 'package:school_facility_management/Controllers/InOut_Controller.dart';
 import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/add_device_detail_screen.dart';
 import 'package:school_facility_management/UserModel/devices_detail_model.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart'as xlsio;
 
 import '../UserModel/devices_model.dart';
 
@@ -200,8 +207,7 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
                               borderRadius: BorderRadius.circular(20)),
                           title: Row(
                             children: [
-                              Text(deviceDetailItems[index].deviceDetailName ??
-                                  "Not given"),
+                              Text(deviceDetailItems[index].deviceDetailName),
                             ],
                           ),
                           subtitle: Text(deviceDetailItems[index].deviceStatus),
@@ -217,6 +223,10 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        List<Map<String, dynamic>> dataList = List.generate(deviceDetailItems.length, (index) => deviceDetailItems[index].toMap());
+        createExcel(dataList);
+      }, child: const Icon(Icons.tag),),
     );
   }
 
@@ -234,8 +244,8 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
         deviceOwner: detailController.deviceOwnerController.text,
         deviceId: receivedDevice!.deviceId,
         deviceTypeId: receivedDevice!.deviceTypeId,
-        deviceCost: 200000.toString(),
-        maintainTime: 15,
+        deviceCost: detailController.deviceCostController.text,
+        maintainTime: int.parse(detailController.deviceCostController.text),
         storingDay: DateTime.now().toString(),
       );
       if (detailController.deviceDetailNameController.text != '') {
@@ -313,5 +323,37 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
         );
       },
     );
+  }
+  Future<void> createExcel(List<Map<String, dynamic>> data) async {
+    // Tạo một workbook mới
+    final xlsio.Workbook workbook = xlsio.Workbook();
+    // Tạo một worksheet mới
+    final xlsio.Worksheet sheet = workbook.worksheets["Sheet1"];
+    // Tạo các tiêu đề cho các cột trong file Excel
+    final List<String> headers = data[0].keys.toList();
+    for (int i = 0; i < headers.length; i++) {
+      sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+    }
+    // Thêm dữ liệu vào file Excel
+    for (int i = 0; i < data.length; i++) {
+      final Map<String, dynamic> row = data[i];
+      final List<dynamic> values = row.values.toList();
+      for (int j = 0; j < values.length; j++) {
+        sheet.getRangeByIndex(i + 2, j + 1).setValue(values[j]);
+      }
+    }
+    // Lưu file Excel trên thiết bị của bạn
+    final List<int>? bytes = workbook.saveAsStream();
+    if (bytes != null) {
+      const String fileName = 'example.xlsx';
+      final String directory = (await getApplicationSupportDirectory()).path;
+      print(directory);
+      if (directory != null) {
+        final String path = directory;
+        final File file = File('$path/$fileName');
+        await file.writeAsBytes(bytes, flush: true);
+        OpenFile.open('$path/$fileName');
+      }
+    }
   }
 }

@@ -7,7 +7,7 @@ class MaintainSlip {
   String maintainStatus;
   List<dynamic> maintainDeviceList;
   Timestamp createDay;
-  Timestamp finishDay;
+  Timestamp? finishDay;
 
   MaintainSlip({
     required this.maintainID,

@@ -5,7 +5,6 @@ import 'package:school_facility_management/Screen/create_maintain_slip_screen.da
 import 'package:school_facility_management/Screen/create_report_screen.dart';
 import 'package:school_facility_management/Screen/device_type_management_screen.dart';
 import 'package:school_facility_management/Screen/in_out_management.dart';
-import 'package:school_facility_management/Screen/maintain_management_screen.dart';
 import 'package:school_facility_management/Screen/report_management_screen.dart';
 import 'package:school_facility_management/Screen/room_management_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';

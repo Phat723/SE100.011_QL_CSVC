@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,6 +59,7 @@ class _MaintainSlipManagementScreenState
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Expanded(
                       child: ListView.builder(
@@ -161,13 +164,13 @@ class _MaintainSlipManagementScreenState
                                         Text(
                                           DateFormat('dd/MM/yyyy').format(
                                                 maintainList[index]
-                                                    .finishDay
+                                                    .finishDay!
                                                     .toDate(),
                                               ) +
                                               " - " +
                                               DateFormat('HH:mm').format(
                                                 maintainList[index]
-                                                    .finishDay
+                                                    .finishDay!
                                                     .toDate(),
                                               ),
                                           style: const TextStyle(

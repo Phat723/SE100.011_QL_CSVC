@@ -225,7 +225,6 @@ class _ViolateManagementState extends State<ViolateManagement> {
             ),
             TextButton(
               onPressed: () {
-                violateData['ViolateId'] = generateRandomString();
                 violateData['Violate Name'] = nameController.text;
                 violateData['Violate Money'] = int.parse(moneyController.text);
                 FirebaseFirestore.instance.collection('ViolateType').doc(violateData['ViolateId']).update(violateData).whenComplete(() => Get.snackbar('Thông báo', 'Thay đổi dữ liệu thành công'));

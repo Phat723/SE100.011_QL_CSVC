@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
-import 'package:school_facility_management/UserModel/maintain_model.dart';
+import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
 
 import '../UserModel/devices_detail_model.dart';
 
@@ -21,7 +22,7 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
   List<String> listDeviceName = [];
   List<Map<String, dynamic>> saveDeviceList = [];
   RoomController roomController = Get.put(RoomController());
-
+  AuthController authController = Get.put(AuthController());
   @override
   void initState() {
     fetchDataFromLastCollection();
@@ -116,18 +117,20 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
         roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, deviceDetail.deviceStatus);
       }
       String maintainId = generateRandomString();
-      MaintainTicket maintainTicket = MaintainTicket(
-          maintainId: maintainId,
-          createDay: DateTime.now(),
-          finishDay: DateTime.now(),
-          creatorName: "Chưa có",
-          confirmName: "Chưa có",
+      String creatorIsName = '';
+      authController.getCurrentUserInfo().then((value) => creatorIsName = value!.username);
+      MaintainSlip maintainSlip = MaintainSlip(
+          maintainID: maintainId,
+          createDay: Timestamp.now(),
+          finishDay: null,
+          creatorName: creatorIsName,
+          confirmName: '',
           maintainStatus: "Đang bảo trì",
           maintainDeviceList: saveDeviceList);
       FirebaseFirestore.instance
           .collection("Maintain")
           .doc(maintainId)
-          .set(maintainTicket.toMap());
+          .set(maintainSlip.toMap());
       listDeviceName.clear();
       saveDeviceList.clear();
     });

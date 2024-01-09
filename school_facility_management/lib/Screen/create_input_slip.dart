@@ -385,6 +385,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
     inOutController.items = List.generate(
         data.length, (index) => DeviceDetail.fromMap(data[index]));
     data.clear();
+    FilePicker.platform.clearTemporaryFiles();
     setState(() {});
   }
 }

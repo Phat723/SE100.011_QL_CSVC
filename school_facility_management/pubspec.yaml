@@ -54,6 +54,9 @@ dependencies:
   carousel_slider: ^4.2.1
   dots_indicator: ^3.0.0
   flutter_rating_bar: ^4.0.1
+  syncfusion_flutter_xlsio: ^24.1.45
+  path_provider: ^2.1.2
+  open_file: ^3.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
