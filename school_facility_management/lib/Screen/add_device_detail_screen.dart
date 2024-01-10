@@ -31,7 +31,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Add Device Detail",
+              const Text("Thêm thiết bị",
                   style:
                       TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
@@ -39,7 +39,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
                 controller: dv.storeCodeController,
                 enabled: false,
                 decoration: InputDecoration(
-                  labelText: 'Store Code',
+                  labelText: 'Mã',
                   hintText: dv.storeCodeController.text,
                   disabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -51,7 +51,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
               TextFormField(
                 controller: dv.deviceDetailNameController,
                 decoration: InputDecoration(
-                  hintText: 'Device Detail Name',
+                  hintText: 'Tên thiết bị',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black12),
@@ -66,7 +66,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
               TextFormField(
                 controller: dv.deviceOwnerController,
                 decoration: InputDecoration(
-                  hintText: 'Owner Names',
+                  hintText: 'Người được cấp',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black12),
@@ -103,7 +103,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
                                 value: dv.areaId.value,
                                 child: const Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child: Text("Area"),
+                                  child: Text("Khu vực"),
                                 ),
                               ),
                               items: snapshot.data?.docs
@@ -153,7 +153,7 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
                                 value: dv.roomId.value,
                                 child: const Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child: Text("Room"),
+                                  child: Text("Phòng"),
                                 ),
                               ),
                               items: snapshot.data?.docs
@@ -241,21 +241,23 @@ class _AddDeviceDetailState extends State<AddDeviceDetail> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20,),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: const Text("Add"),
-                  ),
+                  
                   ElevatedButton(
                     onPressed: () {
                       dv.clearData();
                       Get.back();
                     },
-                    child: const Text("Cancel"),
+                    child: const Text("Hủy"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("Thêm"),
                   ),
                 ],
               )

@@ -9,11 +9,10 @@ import 'package:intl/intl.dart';
 import 'package:school_facility_management/Firebase/firebase_auth_services.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
-import 'package:school_facility_management/my_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key});
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();

@@ -40,8 +40,8 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
                   child: Text(
                     'Hình Ảnh',
                     style: TextStyle(
@@ -51,46 +51,82 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                GridView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: report!.imageList.length,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 1,
-                  ),
-                  itemBuilder: (context, index) {
-                    return LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(FullScreenImageScreen(
-                              imageUrl: report!.imageList[index],
-                              imageList: report!.imageList,
-                            ));
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Hero(
-                              tag: report!.imageList[index],
-                              child: Image.network(
-                                report!.imageList[index],
-                                fit: BoxFit.cover,
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: GridView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: report!.imageList.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 1,
+                    ),
+                    itemBuilder: (context, index) {
+                      return LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(FullScreenImageScreen(
+                                imageUrl: report!.imageList[index],
+                                imageList: report!.imageList,
+                              ));
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Hero(
+                                tag: report!.imageList[index],
+                                child: Image.network(
+                                  report!.imageList[index],
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 9),
+                  child: Text(
+                    'Tên thiết bị',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black12),
+                    color: Colors.white,
+                    
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      report!.deviceDetail['DeviceDetail Name'],
+                      style: AppTheme.body1.copyWith(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
                   child: Text(
                     'Mô tả chi tiết',
                     style: TextStyle(
@@ -103,18 +139,12 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 Container(
                   height: 100,
                   width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.black12),
                     color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -128,11 +158,14 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Trạng thái phiếu báo hỏng',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Trạng thái phiếu báo hỏng',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -146,7 +179,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                       child: const Text("Đã Xử Lý"),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        primary: Color.fromARGB(255, 12, 139, 16),
+                        primary: const Color.fromARGB(255, 12, 139, 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -158,7 +191,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                       },
                       child: const Text("Đang Xử Lý"),
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 197, 179, 17),
+                        primary: const Color.fromARGB(255, 197, 179, 17),
                         foregroundColor: Colors.white,                
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -172,7 +205,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                       child: const Text("Đóng"),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        primary: Color.fromARGB(255, 6, 121, 214),
+                        primary: const Color.fromARGB(255, 6, 121, 214),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

@@ -39,7 +39,7 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         title: const Text(
-          'Phiếu mượn',
+          'Tạo phiếu',
           style: TextStyle(fontSize: 20),
         ),
         elevation: 0,
@@ -80,8 +80,8 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                       value: dv.areaId.value == '' ? null : dv.areaId.value,
                       hint: DropdownMenuItem(
                         value: dv.areaId.value,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text("Khu vực"),
                         ),
                       ),
@@ -130,8 +130,8 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                       value: dv.roomId.value == '' ? null : dv.roomId.value,
                       hint: DropdownMenuItem(
                         value: dv.roomId.value,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text("Phòng"),
                         ),
                       ),
@@ -331,6 +331,7 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 40,),
               ElevatedButton(
                 onPressed: () async {
                   String borrowID = generateRandomString();
@@ -371,16 +372,16 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue,
                   onPrimary: Colors.white,
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
                 ),
-                child: const Text("Gửi Phiếu"),
+                child: const Text("Tạo phiếu"),
               ),
             ],
           ),

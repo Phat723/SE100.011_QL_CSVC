@@ -238,15 +238,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 }),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const FeedbackManagementPage()),
-                );
-              },
-              child: Text('HAHAHAHA'),
-            )
           ],
         ),
       ),

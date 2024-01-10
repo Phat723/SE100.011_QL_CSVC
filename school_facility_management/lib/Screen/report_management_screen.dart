@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Report_Controller.dart';
-import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/report_info_screen.dart';
 import 'package:school_facility_management/UserModel/report_model.dart';
@@ -39,7 +38,7 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
         stream: reportStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("Something wrong happened");
+            return const Text("Something wrong happened");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
@@ -62,7 +61,7 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
                 },
                 child: Container(
                   height: 140,
-                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
@@ -184,9 +183,9 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(90),
-          child: Column(
-            children: [
+          preferredSize: const Size.fromHeight(50),
+          
+            child: 
               Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -205,29 +204,25 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
                           .map((status) => Padding(
                                 padding: const EdgeInsets.only(
                                     left: 4.0, right: 4.0),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width /
-                                      statusList.length,
-                                  child: FilterChip(
-                                    label: Text(
-                                      status,
-                                      style: TextStyle(
-                                        color: selectedList == status
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: selectedList == status
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
+                                child: FilterChip(
+                                  label: Text(
+                                    status,
+                                    style: TextStyle(
+                                      color: selectedList == status
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: selectedList == status
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
                                     ),
-                                    selected: selectedList == status,
-                                    selectedColor:
-                                        getColorFromCode(status),
-                                    checkmarkColor: Colors.white,
-                                    onSelected: (isSelected) {
-                                      updateFilters(status, isSelected);
-                                    },
                                   ),
+                                  selected: selectedList == status,
+                                  selectedColor:
+                                      getColorFromCode(status),
+                                  checkmarkColor: Colors.white,
+                                  onSelected: (isSelected) {
+                                    updateFilters(status, isSelected);
+                                  },
                                 ),
                               ))
                           .toList(),
@@ -235,12 +230,11 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 5),
-            ],
+            
           ),
         ),
-      ),
-    );
+      );
+    
   }
 
   void updateFilters(String status, bool isSelected) {
@@ -260,13 +254,13 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
   Color getColorFromCode(String status) {
     switch (status.toLowerCase()) {
       case 'đang xử lý':
-        return Color.fromARGB(255, 196, 176, 3);
+        return const Color.fromARGB(255, 196, 176, 3);
       case 'đã xử lý':
         return Colors.green;
       case 'đóng':
         return const Color.fromARGB(255, 106, 181, 243);
       case 'chờ duyệt':
-        return Color.fromARGB(255, 236, 77, 77);
+        return const Color.fromARGB(255, 236, 77, 77);
       default:
         return Colors.black; // Màu mặc định khi không tìm thấy một màu nào khớp
     }

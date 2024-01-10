@@ -2,7 +2,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
@@ -89,13 +88,14 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
                     top: -10,
                     child: IconButton(
                       icon: const Icon(
-                        Icons.add_box,
+                                      Icons.download,
+
                         size: 30,
                       ),
                       onPressed: () async {
-                        await Get.to(const AddDeviceDetail());
-                        await addDeviceDetail();
-                        detailController.clearData();
+                        
+                        List<Map<String, dynamic>> dataList = List.generate(deviceDetailItems.length, (index) => deviceDetailItems[index].toMap());
+        createExcel(dataList);
                       },
                     ))
               ],
@@ -223,10 +223,28 @@ class _DeviceDetailManagementState extends State<DeviceDetailManagement> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        List<Map<String, dynamic>> dataList = List.generate(deviceDetailItems.length, (index) => deviceDetailItems[index].toMap());
-        createExcel(dataList);
-      }, child: const Icon(Icons.tag),),
+      
+      floatingActionButton: FloatingActionButton.extended(
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Themes.gradientDeepClr,
+            label: const Text(
+              'Thêm thiết bị',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () async {
+              await Get.to(const AddDeviceDetail());
+                        await addDeviceDetail();
+                        detailController.clearData();
+            },
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
     );
   }
 
