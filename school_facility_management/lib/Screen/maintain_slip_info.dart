@@ -76,12 +76,12 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildInfoItem(
-              "Người Tạo",
+              "Người tạo",
               maintainSlip?.creatorName,
               TextStyle(fontSize: 16),
             ),
             _buildInfoItem(
-              "Trạng Thái",
+              "Trạng thái",
               maintainSlip?.maintainStatus,
               TextStyle(fontSize: 16),
             ),
@@ -90,15 +90,15 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
               children: [
                 Flexible(
                   child: _buildInfoItem(
-                    "Ngày Tạo",
+                    "Từ ngày: ",
                     formattedDate(maintainSlip?.createDay),
                     TextStyle(fontSize: 14),
                   ),
                 ),
                 Flexible(
                   child: _buildInfoItem(
-                    "Ngày Kết Thúc",
-                    formattedDate(Timestamp.now()),
+                    "đến này: ",
+                    formattedDate(maintainSlip?.finishDay),
                     TextStyle(fontSize: 14),
                   ),
                 ),

@@ -357,7 +357,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          icon: const Icon(Icons.edit),
+                                          icon: const Icon(Icons.edit, color: Colors.white,),
                                           onPressed: () {
                                             editedDevice =
                                                 tempDeviceItems[index];
@@ -370,7 +370,7 @@ class _DeviceManagementState extends State<DeviceManagement> {
                                           },
                                         ),
                                         IconButton(
-                                          icon: const Icon(Icons.delete),
+                                          icon: const Icon(Icons.delete, color: Colors.white),
                                           onPressed: () {
                                             if (tempDeviceItems[index]
                                                     .deviceAmount >

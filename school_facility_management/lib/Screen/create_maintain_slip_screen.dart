@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
 
 import '../UserModel/devices_detail_model.dart';
@@ -54,70 +55,95 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text(
-                "Danh sách tất cả các thiết bị",
-                style: AppTheme.headline,
-              ),
-              SizedBox(
-                height: 300,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: listDeviceDetail.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: Colors.black12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(listDeviceDetail[index].deviceDetailName),
-                              Text(listDeviceDetail[index].deviceStatus),
-                            ],
-                          ),
-                          Checkbox(
-                            value: listDeviceName
-                                .contains(listDeviceDetail[index].deviceDetailName),
-                            onChanged: (selected) {
-                              setState(() {
-                                bool isAdding = selected != null && selected;
-                                isAdding
-                                    ? listDeviceName.add(
-                                        listDeviceDetail[index].deviceDetailName)
-                                    : listDeviceName.remove(
-                                        listDeviceDetail[index].deviceDetailName);
-                                isAdding
-                                    ? saveDeviceList
-                                        .add(listDeviceDetail[index].toMap())
-                                    : saveDeviceList.removeWhere((element) =>
-                                        element['DeviceDetail Name'] ==
-                                        listDeviceDetail[index].deviceDetailName);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+      appBar: AppBar(
+            foregroundColor: Colors.white,
+            title: const Text(
+              'Tạo phiếu bảo trì',
+              style: TextStyle(fontSize: 20),
+            ),
+            elevation: 0,
+            centerTitle: true,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    createMaintainTicket();
-                  },
-                  child: const Text("Tạo phiếu Bảo trì")),
-            ],
+            ),
+            
           ),
+floatingActionButton: FloatingActionButton.extended(
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Themes.gradientDeepClr,
+            label: const Text(
+              'Tạo phiếu bảo trì',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () {
+              createMaintainTicket();
+            },
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: listDeviceDetail.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(color: Colors.black12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(listDeviceDetail[index].deviceDetailName),
+                          Text(listDeviceDetail[index].deviceStatus),
+                        ],
+                      ),
+                      Checkbox(
+                        value: listDeviceName
+                            .contains(listDeviceDetail[index].deviceDetailName),
+                        onChanged: (selected) {
+                          setState(() {
+                            bool isAdding = selected != null && selected;
+                            isAdding
+                                ? listDeviceName.add(
+                                    listDeviceDetail[index].deviceDetailName)
+                                : listDeviceName.remove(
+                                    listDeviceDetail[index].deviceDetailName);
+                            isAdding
+                                ? saveDeviceList
+                                    .add(listDeviceDetail[index].toMap())
+                                : saveDeviceList.removeWhere((element) =>
+                                    element['DeviceDetail Name'] ==
+                                    listDeviceDetail[index].deviceDetailName);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            
+          ],
         ),
       ),
     );

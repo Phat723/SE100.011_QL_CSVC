@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/Screen/device_management_screen.dart';
-
 import 'package:school_facility_management/UserModel/devices_type_model.dart';
 import 'package:school_facility_management/my_button.dart';
 

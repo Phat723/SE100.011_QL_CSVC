@@ -265,99 +265,100 @@ void _loadUserData() async {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Nhập mật khẩu";
-                      }
-                      return null;
-                    },
-                    obscureText: !isVisible,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "Mật khẩu",
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              isVisible = !isVisible;
-                            });
-                          },
-                          icon: Icon(isVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off)),
-                      prefixIcon: const Icon(
-                        Icons.lock,
-                        color: Colors.grey,
-                      ),
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        color: Colors.grey.shade600,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.black12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.black12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: confirmPasswordController,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Nhập mật khẩu";
-                      } else if (passwordController.text !=
-                          confirmPasswordController.text) {
-                        return "Mật khẩu không đúng";
-                      }
-                      return null;
-                    },
-                    obscureText: !isVisible,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "Xác nhận mật khẩu",
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            //In here we will create a click to show and hide the password a toggle button
-                            setState(() {
-                              //toggle button
-                              isVisible = !isVisible;
-                            });
-                          },
-                          icon: Icon(isVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off)),
-                      prefixIcon: const Icon(
-                        Icons.lock,
-                        color: Colors.grey,
-                      ),
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        color: Colors.grey.shade600,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.black12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.black12),
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(height: 20),
+                  // TextFormField(
+                  //   controller: passwordController,
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Nhập mật khẩu";
+                  //     }
+                  //     return null;
+                  //   },
+                  //   obscureText: !isVisible,
+                  //   style: const TextStyle(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  //   decoration: InputDecoration(
+                  //     hintText: "Mật khẩu",
+                  //     suffixIcon: IconButton(
+                  //         onPressed: () {
+                  //           setState(() {
+                  //             isVisible = !isVisible;
+                  //           });
+                  //         },
+                  //         icon: Icon(isVisible
+                  //             ? Icons.visibility
+                  //             : Icons.visibility_off)),
+                  //     prefixIcon: const Icon(
+                  //       Icons.lock,
+                  //       color: Colors.grey,
+                  //     ),
+                  //     hintStyle: TextStyle(
+                  //       fontWeight: FontWeight.w500,
+                  //       fontSize: 15,
+                  //       color: Colors.grey.shade600,
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: const BorderSide(color: Colors.black12),
+                  //     ),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: const BorderSide(color: Colors.black12),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 20),
+                  // TextFormField(
+                  //   controller: confirmPasswordController,
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Nhập mật khẩu";
+                  //     } else if (passwordController.text !=
+                  //         confirmPasswordController.text) {
+                  //       return "Mật khẩu không đúng";
+                  //     }
+                  //     return null;
+                  //   },
+                  //   obscureText: !isVisible,
+                  //   style: const TextStyle(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  //   decoration: InputDecoration(
+                  //     hintText: "Xác nhận mật khẩu",
+                  //     suffixIcon: IconButton(
+                  //         onPressed: () {
+                  //           //In here we will create a click to show and hide the password a toggle button
+                  //           setState(() {
+                  //             //toggle button
+                  //             isVisible = !isVisible;
+                  //           });
+                  //         },
+                  //         icon: Icon(isVisible
+                  //             ? Icons.visibility
+                  //             : Icons.visibility_off)),
+                  //     prefixIcon: const Icon(
+                  //       Icons.lock,
+                  //       color: Colors.grey,
+                  //     ),
+                  //     hintStyle: TextStyle(
+                  //       fontWeight: FontWeight.w500,
+                  //       fontSize: 15,
+                  //       color: Colors.grey.shade600,
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: const BorderSide(color: Colors.black12),
+                  //     ),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: const BorderSide(color: Colors.black12),
+                  //     ),
+                  //   ),
+                  // ),
+                  
                   const SizedBox(height: 20),
                   SizedBox(
                     width: context.width,
@@ -365,41 +366,42 @@ void _loadUserData() async {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          height: 55,
-                          width: 100,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadiusDirectional.circular(10),
-                            border: Border.all(color: Colors.black12),
-                          ),
-                          child: DropdownButton<String>(
-                            hint: Text(selectedRole),
-                            isExpanded: true,
-                            items: const [
-                              DropdownMenuItem(
-                                value: "Admin",
-                                child: Text("Admin"),
-                              ),
-                              DropdownMenuItem(
-                                value: "User",
-                                child: Text("User"),
-                              )
-                            ],
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectedRole = value!;
-                              });
-                            },
-                          ),
-                        ),
+                        // Container(
+                        //   height: 55,
+                        //   width: 100,
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 5, vertical: 5),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.white,
+                        //     borderRadius:
+                        //         BorderRadiusDirectional.circular(10),
+                        //     border: Border.all(color: Colors.black12),
+                        //   ),
+                        //   child: DropdownButton<String>(
+                        //     hint: Text(selectedRole),
+                        //     isExpanded: true,
+                        //     items: const [
+                        //       DropdownMenuItem(
+                        //         value: "Admin",
+                        //         child: Text("Admin"),
+                        //       ),
+                        //       DropdownMenuItem(
+                        //         value: "User",
+                        //         child: Text("User"),
+                        //       )
+                        //     ],
+                        //     onChanged: (String? value) {
+                        //       setState(() {
+                        //         selectedRole = value!;
+                        //       });
+                        //     },
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 55,
-                          width: 120,
+                          width: 170,
                           child: TextFormField(
+                            //style: TextStyle(fontSize: 10),
                             controller: birthDayController,
                             readOnly: true,
                             onTap: () {
@@ -420,6 +422,7 @@ void _loadUserData() async {
                               });
                             },
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
                               labelText: 'Ngày sinh',
                               suffixIcon:
                                   const Icon(Icons.calendar_today),
@@ -439,8 +442,8 @@ void _loadUserData() async {
                         Container(
                           height: 55,
                           width: 100,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
+                           padding: const EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 5),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius:

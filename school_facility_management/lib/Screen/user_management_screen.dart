@@ -133,8 +133,8 @@ class _UserManagementState extends State<UserManagement> {
                                 child: Image.network(
                                   items[index]["imageURL"],
                                   fit: BoxFit.cover,
-                                  width: 50,
-                                  height: 50,
+                                  width: 70,
+                                  height: 70,
                                 ),
                               )
                             : const Icon(Icons.person),
@@ -146,7 +146,8 @@ class _UserManagementState extends State<UserManagement> {
             text: 'Họ tên: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black, // Set the desired color
+              color: Colors.black,
+              fontSize: 16, // Set the desired color
             ),
             children: <TextSpan>[
               TextSpan(
@@ -161,38 +162,45 @@ class _UserManagementState extends State<UserManagement> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8,),
+
             RichText(
               text: TextSpan(
                 text: 'Vai trò: ',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black, // Set the desired color
+                  color: Colors.black, fontSize: 16, // Set the desired color
                 ),
                 children: <TextSpan>[
                   TextSpan(
                     text: items[index]["Role"] ?? "Not given",
                     style: TextStyle(
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.normal,fontSize: 16, 
                     ),
                   ),
                 ],
               ),
             ),
-            RichText(
-              text: TextSpan(
-                text: 'Email: ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black, // Set the desired color
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: items[index]["Email"] ?? "Not given",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                    ),
+            SizedBox(height: 8,),
+            SizedBox(
+              width: 260,
+              child: RichText(
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  text: 'Email: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,fontSize: 16,  // Set the desired color
                   ),
-                ],
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: items[index]["Email"] ?? "Not given",
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,fontSize: 16, 
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -209,21 +217,29 @@ class _UserManagementState extends State<UserManagement> {
               )
             : const Text("No data"),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue, // Set the desired background color
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SignUpScreen()),
-          );
-          loadUsers();
-        },
-        child: Icon(
-          Icons.person_add_alt_1,
-          color: Colors.white, // Set the desired icon color
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+            icon: const Icon(
+              Icons.person_add,
+              color: Colors.white,
+            ),
+            backgroundColor: Themes.gradientDeepClr,
+            label: const Text(
+              'Thêm người dùng',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const SignUpScreen()),
+                        );
+                        loadUsers();
+            },
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
     );
   }
 }

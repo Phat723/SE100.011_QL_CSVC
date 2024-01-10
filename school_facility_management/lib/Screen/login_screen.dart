@@ -195,10 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         },
                         child: const Text(
-                          "Admin tổng",
+                          "Quản trị viên",
                           style: TextStyle(
                             color: Themes.selectedClr,
-                            fontSize: 20,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -220,10 +220,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         },
                         child: const Text(
-                          "User",
+                          "Người dùng",
                           style: TextStyle(
                             color: Themes.selectedClr,
-                            fontSize: 20,
+                            fontSize: 14,
                           ),
                         ),
                       ),

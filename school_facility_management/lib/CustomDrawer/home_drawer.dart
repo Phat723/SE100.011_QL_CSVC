@@ -33,58 +33,44 @@ class _HomeDrawerState extends State<HomeDrawer> {
     drawerList = <DrawerList>[
       DrawerList(
         index: DrawerIndex.HOME,
-        labelName: 'Home',
+        labelName: 'Trang chủ',
         icon: const Icon(Icons.home),
       ),
       DrawerList(
         index: DrawerIndex.User,
-        labelName: 'User management',
+        labelName: 'Quản lý người dùng',
         icon: const Icon(Icons.account_circle),
       ),
       DrawerList(
         index: DrawerIndex.Device,
-        labelName: 'Device management',
+        labelName: 'Quản lý thiết bị',
         icon: const Icon(Icons.help),
       ),
       DrawerList(
         index: DrawerIndex.InOut,
-        labelName: 'In Out Management',
+        labelName: 'Quản lý nhập xuất',
         icon: const Icon(Icons.group),
       ),
       DrawerList(
         index: DrawerIndex.Report,
-        labelName: 'Report Management',
+        labelName: 'Quản lý báo hỏng',
         icon: const Icon(Icons.share),
       ),
-      DrawerList(
-        index: DrawerIndex.CreateReport,
-        labelName: 'Create Report',
-        icon: const Icon(Icons.info),
-      ),
-      DrawerList(
-        index: DrawerIndex.Borrow,
-        labelName: 'Borrow Device',
-        icon: const Icon(Icons.abc_rounded),
-      ),
+      
       DrawerList(
         index: DrawerIndex.BorrowManagement,
-        labelName: 'Borrow Management',
+        labelName: 'Quản lý mượn trả',
         icon: const Icon(Icons.add_circle),
       ),
       DrawerList(
         index: DrawerIndex.Broken,
-        labelName: 'Vi phạm',
+        labelName: 'Danh mục vi phạm',
         icon: const Icon(Icons.ac_unit_sharp),
       ),
       DrawerList(
         index: DrawerIndex.Room,
-        labelName: 'Room Management',
+        labelName: 'Quản lý phòng',
         icon: const Icon(Icons.room),
-      ),
-      DrawerList(
-        index: DrawerIndex.CreateMaintain,
-        labelName: 'Tạo Bảo Trì',
-        icon: const Icon(Icons.accessibility),
       ),
       DrawerList(
         index: DrawerIndex.Maintain,
