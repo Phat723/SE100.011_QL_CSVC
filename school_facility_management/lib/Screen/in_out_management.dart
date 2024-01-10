@@ -90,10 +90,7 @@ class _IoManagementState extends State<IoManagement> {
                               ),
                             ],
                           ),
-                          Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                            children: [
+                         
                               SizedBox(
                                 width: 250,
                                 child: Text(
@@ -101,8 +98,8 @@ class _IoManagementState extends State<IoManagement> {
                                         '', overflow: TextOverflow.ellipsis,),
                               ),
                               Text('Ngày tạo: ${listIo[index].createDay}'),
-                            ],
-                          )
+                            
+                        
                         ],
                       ),
                     ),
