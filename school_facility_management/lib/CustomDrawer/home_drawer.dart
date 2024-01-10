@@ -1,15 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Controllers/Auth_Controllers.dart';
 import '../Model/AppTheme.dart';
 import '../Screen/login_screen.dart';
+import '../UserModel/user_model.dart';
 
 class HomeDrawer extends StatefulWidget {
-  const HomeDrawer(
-      {Key? key,
-      this.screenIndex,
-      this.iconAnimationController,
-      this.callBackIndex})
+  const HomeDrawer({Key? key,
+    this.screenIndex,
+    this.iconAnimationController,
+    this.callBackIndex})
       : super(key: key);
 
   final AnimationController? iconAnimationController;
@@ -21,7 +23,8 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
-  List<DrawerList>? drawerList;
+  List<DrawerList> drawerList = [];
+  String role = '';
 
   @override
   void initState() {
@@ -29,66 +32,88 @@ class _HomeDrawerState extends State<HomeDrawer> {
     super.initState();
   }
 
-  void setDrawerListArray() {
-    drawerList = <DrawerList>[
-      DrawerList(
-        index: DrawerIndex.HOME,
-        labelName: 'Trang chủ',
-        icon: const Icon(Icons.home),
-      ),
-      DrawerList(
-        index: DrawerIndex.User,
-        labelName: 'Quản lý người dùng',
-        icon: const Icon(Icons.account_circle),
-      ),
-      DrawerList(
-        index: DrawerIndex.Device,
-        labelName: 'Quản lý thiết bị',
-        icon: const Icon(Icons.help),
-      ),
-      DrawerList(
-        index: DrawerIndex.InOut,
-        labelName: 'Quản lý nhập xuất',
-        icon: const Icon(Icons.group),
-      ),
-      DrawerList(
-        index: DrawerIndex.Report,
-        labelName: 'Quản lý báo hỏng',
-        icon: const Icon(Icons.share),
-      ),
-      
-      DrawerList(
-        index: DrawerIndex.BorrowManagement,
-        labelName: 'Quản lý mượn trả',
-        icon: const Icon(Icons.add_circle),
-      ),
-      DrawerList(
-        index: DrawerIndex.Broken,
-        labelName: 'Danh mục vi phạm',
-        icon: const Icon(Icons.ac_unit_sharp),
-      ),
-      DrawerList(
-        index: DrawerIndex.Room,
-        labelName: 'Quản lý phòng',
-        icon: const Icon(Icons.room),
-      ),
-      DrawerList(
-        index: DrawerIndex.Maintain,
-        labelName: 'Bảo Trì',
-        icon: const Icon(Icons.add),
-      ),
-      DrawerList(
-        index: DrawerIndex.Statistical,
-        labelName: 'Thông kê',
-        icon: const Icon(Icons.add),
-      ),
-    ];
+  void setDrawerListArray() async{
+    await getCurrentUser();
+    if (role == 'Admin') {
+      drawerList = <DrawerList>[
+        DrawerList(
+          index: DrawerIndex.HOME,
+          labelName: 'Trang chủ',
+          icon: const Icon(Icons.home),
+        ),
+        DrawerList(
+          index: DrawerIndex.User,
+          labelName: 'Quản lý người dùng',
+          icon: const Icon(Icons.account_circle),
+        ),
+        DrawerList(
+          index: DrawerIndex.Device,
+          labelName: 'Quản lý thiết bị',
+          icon: const Icon(Icons.devices),
+        ),
+        DrawerList(
+          index: DrawerIndex.InOut,
+          labelName: 'Quản lý nhập xuất',
+          icon: const Icon(Icons.input),
+        ),
+        DrawerList(
+          index: DrawerIndex.Report,
+          labelName: 'Quản lý báo hỏng',
+          icon: const Icon(Icons.report),
+        ),
+        DrawerList(
+          index: DrawerIndex.BorrowManagement,
+          labelName: 'Quản lý mượn trả',
+          icon: const Icon(Icons.handshake),
+        ),
+        DrawerList(
+          index: DrawerIndex.Broken,
+          labelName: 'Danh mục vi phạm',
+          icon: const Icon(Icons.error_outline),
+        ),
+        DrawerList(
+          index: DrawerIndex.Room,
+          labelName: 'Quản lý phòng',
+          icon: const Icon(Icons.room),
+        ),
+        DrawerList(
+          index: DrawerIndex.Maintain,
+          labelName: 'Bảo Trì',
+          icon: const Icon(Icons.handyman_rounded),
+        ),
+        DrawerList(
+          index: DrawerIndex.RatingManageMent,
+          labelName: 'Quản lý đánh giá',
+          icon: const Icon(Icons.star),
+        ),
+        DrawerList(
+          index: DrawerIndex.Statistical,
+          labelName: 'Thông kê',
+          icon: const Icon(Icons.bar_chart),
+        ),
+      ];
+    } else {
+      drawerList = <DrawerList>[
+        DrawerList(
+          index: DrawerIndex.CreateReport,
+          labelName: 'Báo hỏng',
+          icon: const Icon(Icons.warning),
+        ),
+        DrawerList(
+          index: DrawerIndex.Rating,
+          labelName: 'Đánh giá',
+          icon: const Icon(Icons.edit_note_sharp),
+        ),
+      ];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     AuthController authController = AuthController();
-    var brightness = MediaQuery.of(context).platformBrightness;
+    var brightness = MediaQuery
+        .of(context)
+        .platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
@@ -113,11 +138,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             (widget.iconAnimationController!.value) * 0.2),
                         child: RotationTransition(
                           turns: AlwaysStoppedAnimation<double>(Tween<double>(
-                                      begin: 0.0, end: 24.0)
-                                  .animate(CurvedAnimation(
-                                      parent: widget.iconAnimationController!,
-                                      curve: Curves.fastOutSlowIn))
-                                  .value /
+                              begin: 0.0, end: 24.0)
+                              .animate(CurvedAnimation(
+                              parent: widget.iconAnimationController!,
+                              curve: Curves.fastOutSlowIn))
+                              .value /
                               360),
                           child: Container(
                             height: 120,
@@ -133,8 +158,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             ),
                             child: ClipRRect(
                               borderRadius:
-                                  const BorderRadius.all(Radius.circular(60.0)),
-                              child: Image.asset('assets/UserDefaultAvatar.png'),
+                              const BorderRadius.all(Radius.circular(60.0)),
+                              child: Image.asset(
+                                  'assets/UserDefaultAvatar.png'),
                             ),
                           ),
                         ),
@@ -181,7 +207,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             children: <Widget>[
               ListTile(
                 title: const Text(
-                  'Sign Out',
+                  'Đăng xuất',
                   style: TextStyle(
                     fontFamily: AppTheme.fontName,
                     fontWeight: FontWeight.w600,
@@ -190,20 +216,37 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   textAlign: TextAlign.left,
                 ),
-                onTap: (
-                    ) {
+                onTap: () {
                   AuthController.logoutUser();
                   Get.offAll(const LoginScreen());
                 },
               ),
               SizedBox(
-                height: MediaQuery.of(context).padding.bottom,
+                height: MediaQuery
+                    .of(context)
+                    .padding
+                    .bottom,
               )
             ],
           ),
         ],
       ),
     );
+  }
+
+  Future<void> getCurrentUser() async {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser != null) {
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+      await FirebaseFirestore.instance
+          .collection("Client")
+          .doc(firebaseUser.uid)
+          .get();
+
+      MyUser currentUser = MyUser.fromSnapShot(userSnapshot);
+      role = currentUser.role;
+    }
   }
 
   Widget inkwell(DrawerList listData) {
@@ -241,17 +284,17 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   listData.isAssetsImage
                       ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: Image.asset(listData.imageName,
-                              color: widget.screenIndex == listData.index
-                                  ? Colors.blue
-                                  : AppTheme.nearlyBlack),
-                        )
+                    width: 24,
+                    height: 24,
+                    child: Image.asset(listData.imageName,
+                        color: widget.screenIndex == listData.index
+                            ? Colors.blue
+                            : AppTheme.nearlyBlack),
+                  )
                       : Icon(listData.icon?.icon,
-                          color: widget.screenIndex == listData.index
-                              ? Colors.blue
-                              : AppTheme.nearlyBlack),
+                      color: widget.screenIndex == listData.index
+                          ? Colors.blue
+                          : AppTheme.nearlyBlack),
                   const Padding(
                     padding: EdgeInsets.all(4.0),
                   ),
@@ -271,36 +314,42 @@ class _HomeDrawerState extends State<HomeDrawer> {
             ),
             widget.screenIndex == listData.index
                 ? AnimatedBuilder(
-                    animation: widget.iconAnimationController!,
-                    builder: (BuildContext context, Widget? child) {
-                      return Transform(
-                        transform: Matrix4.translationValues(
-                            (MediaQuery.of(context).size.width * 0.75 - 64) *
-                                (1.0 -
-                                    widget.iconAnimationController!.value -
-                                    1.0),
-                            0.0,
-                            0.0),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 8),
-                          child: Container(
-                            width:
-                                MediaQuery.of(context).size.width * 0.75 - 64,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.2),
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(0),
-                                topRight: Radius.circular(28),
-                                bottomLeft: Radius.circular(0),
-                                bottomRight: Radius.circular(28),
-                              ),
-                            ),
-                          ),
+              animation: widget.iconAnimationController!,
+              builder: (BuildContext context, Widget? child) {
+                return Transform(
+                  transform: Matrix4.translationValues(
+                      (MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.75 - 64) *
+                          (1.0 -
+                              widget.iconAnimationController!.value -
+                              1.0),
+                      0.0,
+                      0.0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: Container(
+                      width:
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.75 - 64,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.2),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(28),
+                          bottomLeft: Radius.circular(0),
+                          bottomRight: Radius.circular(28),
                         ),
-                      );
-                    },
-                  )
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
                 : const SizedBox()
           ],
         ),
@@ -326,8 +375,9 @@ enum DrawerIndex {
   Room,
   CreateMaintain,
   Maintain,
+  Rating,
+  RatingManageMent,
   Statistical,
-
 }
 
 class DrawerList {

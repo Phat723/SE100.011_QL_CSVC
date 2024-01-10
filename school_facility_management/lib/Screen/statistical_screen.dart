@@ -122,7 +122,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
     );
   }
 
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
+  Widget leftTitleWidgets2(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 15,
@@ -130,13 +130,41 @@ class _LineChartSample2State extends State<LineChartSample2> {
     String text;
     switch (value.toInt()) {
       case 1:
+        text = '5';
+        break;
+      case 2:
         text = '10';
         break;
       case 3:
-        text = '30';
+        text = '15';
+        break;
+      case 4:
+        text = '20';
         break;
       case 5:
-        text = '50';
+        text = '25';
+        break;
+      default:
+        return Container();
+    }
+
+    return Text(text, style: style, textAlign: TextAlign.left);
+  }
+  Widget leftTitleWidgets1(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = '5';
+        break;
+      case 3:
+        text = '15';
+        break;
+      case 5:
+        text = '20';
         break;
       default:
         return Container();
@@ -185,7 +213,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
           sideTitles: SideTitles(
             showTitles: true,
             interval: 1,
-            getTitlesWidget: leftTitleWidgets,
+            getTitlesWidget: leftTitleWidgets2,
             reservedSize: 42,
           ),
         ),
@@ -270,7 +298,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
           sideTitles: SideTitles(
             showTitles: true,
             interval: 1,
-            getTitlesWidget: leftTitleWidgets,
+            getTitlesWidget: leftTitleWidgets1,
             reservedSize: 42,
           ),
         ),
@@ -282,7 +310,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
       minX: 0,
       maxX: 11,
       minY: 0,
-      maxY: 6,
+      maxY: 8,
       lineBarsData: [
         LineChartBarData(
           spots: [

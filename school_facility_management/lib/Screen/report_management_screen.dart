@@ -48,6 +48,7 @@ class _ReportManagementScreenState extends State<ReportManagementScreen> {
             Report report = Report.fromSnapshot(data);
             reportList.add(report);
           }
+          reportList.sort((a, b) => b.creationDate.compareTo(a.creationDate));
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView.separated(
