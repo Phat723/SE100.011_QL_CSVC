@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +20,19 @@ class _MaintainSlipManagementScreenState
     extends State<MaintainSlipManagementScreen> {
   var dataMaintainSlip = FirebaseFirestore.instance.collection("Maintain");
   List<MaintainSlip> maintainList = [];
+
+  Future<void> _deleteMaintainSlip(String maintainID) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Maintain")
+          .doc(maintainID)
+          .delete();
+      // Optionally, you may want to update the UI or show a confirmation message
+    } catch (e) {
+      // Handle errors, show an error message, or log the error
+      print("Error deleting Maintain Slip: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

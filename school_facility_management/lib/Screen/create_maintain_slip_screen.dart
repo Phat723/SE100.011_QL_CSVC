@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
@@ -10,6 +11,7 @@ import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
 
 import '../UserModel/devices_detail_model.dart';
+import '../UserModel/user_model.dart';
 
 class CreateMaintainSlip extends StatefulWidget {
   const CreateMaintainSlip({super.key});
@@ -24,10 +26,30 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
   List<Map<String, dynamic>> saveDeviceList = [];
   RoomController roomController = Get.put(RoomController());
   AuthController authController = Get.put(AuthController());
+  String createName="";
   @override
   void initState() {
     fetchDataFromLastCollection();
+
     super.initState();
+    getCurrentUser();
+  }
+  Future<void> getCurrentUser() async {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser != null) {
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+      await FirebaseFirestore.instance
+          .collection("Client")
+          .doc(firebaseUser.uid)
+          .get();
+
+      MyUser currentUser = MyUser.fromSnapShot(userSnapshot);
+
+      setState(() {
+        createName = currentUser.username;
+      });
+    }
   }
 
   @override
@@ -143,13 +165,11 @@ floatingActionButton: FloatingActionButton.extended(
         roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, deviceDetail.deviceStatus);
       }
       String maintainId = generateRandomString();
-      String creatorIsName = '';
-      authController.getCurrentUserInfo().then((value) => creatorIsName = value!.username);
       MaintainSlip maintainSlip = MaintainSlip(
           maintainID: maintainId,
           createDay: Timestamp.now(),
           finishDay: null,
-          creatorName: creatorIsName,
+          creatorName: createName,
           confirmName: '',
           maintainStatus: "Đang bảo trì",
           maintainDeviceList: saveDeviceList);

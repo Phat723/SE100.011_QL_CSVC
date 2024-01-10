@@ -19,7 +19,6 @@ class MaintainSlip {
     required this.finishDay,
 
   });
-
   // Factory method to create an object from a map
   factory MaintainSlip.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
@@ -36,7 +35,7 @@ class MaintainSlip {
       maintainStatus: data['Maintain Status'],
       maintainDeviceList: data['Maintain Device List'],
       createDay: data['Create Day'],
-      finishDay: data['Finish Day'],
+      finishDay: (data['Finish Day'] == '')?null:data['Finish Day'],
     );
   }
   // Method to convert an object to a map
