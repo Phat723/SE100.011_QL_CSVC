@@ -207,7 +207,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                       detailController.deviceDetailNameController.clear();
                     });
                                     },
-                                    child: const Text('Add to list'),
+                                    child: const Text('Thêm vào danh sách'),
                                   ),
                   ),
                 ],
@@ -301,7 +301,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                   inOutController.inputSlipToFirebase();
                   Get.back();
                 },
-                child: const Text('Create Input Slip'),
+                child: const Text('Tạo phiếu xuất'),
               ),
             ],
           ),
@@ -337,9 +337,6 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
     inOutController.generateInputSlip(storeId, 'Mua mới');
     var myRows = excel.tables[table]?.rows;
     for (int i = 1; i < myRows!.length; i++) {
-      print(sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i))
-          .value);
       data.add({
         "DeviceDetail Id": sheet
             .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i))
@@ -385,7 +382,6 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
     inOutController.items = List.generate(
         data.length, (index) => DeviceDetail.fromMap(data[index]));
     data.clear();
-    FilePicker.platform.clearTemporaryFiles();
     setState(() {});
   }
 }

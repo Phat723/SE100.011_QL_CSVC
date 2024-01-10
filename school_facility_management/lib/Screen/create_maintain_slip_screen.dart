@@ -89,6 +89,7 @@ floatingActionButton: FloatingActionButton.extended(
             ),
             onPressed: () {
               createMaintainTicket();
+              Get.back();
             },
           ),
           floatingActionButtonLocation:
@@ -238,7 +239,7 @@ floatingActionButton: FloatingActionButton.extended(
         }
       }
     } catch (e) {
-      Get.snackbar("Error fetching data", "$e");
+      
     }
   }
 }

@@ -90,14 +90,14 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
               children: [
                 Flexible(
                   child: _buildInfoItem(
-                    "Từ ngày: ",
+                    "Từ ngày",
                     formattedDate(maintainSlip?.createDay),
                     TextStyle(fontSize: 14),
                   ),
                 ),
                 Flexible(
                   child: _buildInfoItem(
-                    "đến này: ",
+                    "Đến ngày",
                     formattedDate(maintainSlip?.finishDay),
                     TextStyle(fontSize: 14),
                   ),

@@ -6,7 +6,7 @@ import 'package:school_facility_management/Screen/create_input_slip.dart';
 import 'package:school_facility_management/UserModel/in_out_log_model.dart';
 
 class IoManagement extends StatefulWidget {
-  const IoManagement({super.key});
+  const IoManagement({Key? key}) : super(key: key);
 
   @override
   State<IoManagement> createState() => _IoManagementState();
@@ -15,6 +15,7 @@ class IoManagement extends StatefulWidget {
 class _IoManagementState extends State<IoManagement> {
   final ioLogDb = FirebaseFirestore.instance.collection("InOutLog");
   List<InOutLog> listIo = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +35,8 @@ class _IoManagementState extends State<IoManagement> {
               end: Alignment.centerRight,
             ),
           ),
-        ),),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,64 +44,76 @@ class _IoManagementState extends State<IoManagement> {
               stream: ioLogDb.snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Text("Something worng happen");
+                  return const Text("Something went wrong");
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 }
+                listIo.clear(); // Clear the list before updating it
                 for (var data in snapshot.data!.docs) {
                   listIo.add(InOutLog.fromSnapshot(data));
                 }
+                listIo.sort((a, b) => b.createDay.compareTo(a.createDay));
                 return ListView.separated(
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: listIo.length,
-                  itemBuilder: (context, index) => Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black12),
+                  itemBuilder: (context, index) => Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(14.0),
+                      title: Text(
+                        "Phiếu nhập xuất",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Phiếu nhập xuất",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.bold),
-                          ),
                           const Divider(),
                           Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                listIo[index].createCase,
-                              ),
-                              Text(
-                                listIo[index].createType,
-                                style: TextStyle(
-                                    color: (listIo[index].createType ==
-                                            'Input Slip')
+                              Text(listIo[index].createCase),
+                              Row(
+                                children: [
+                                  Icon(
+                                    (listIo[index].createType == 'Input Slip')
+                                        ? Icons.arrow_downward // Use the check icon for Input Slip
+                                        : Icons.arrow_upward,
+                                    color: (listIo[index].createType == 'Input Slip')
                                         ? Colors.green
-                                        : Colors.red),
+                                        : Colors.red,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    (listIo[index].createType == 'Input Slip')
+                                        ? 'Phiếu Nhập'
+                                        : 'Phiếu Xuất',
+                                    style: TextStyle(
+                                      color: (listIo[index].createType == 'Input Slip')
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                         
-                              SizedBox(
-                                width: 250,
-                                child: Text(
-                                    'Người tạo: ${listIo[index].creatorName}' ??
-                                        '', overflow: TextOverflow.ellipsis,),
-                              ),
-                              Text('Ngày tạo: ${listIo[index].createDay}'),
-                            
-                        
+                          SizedBox(
+                            width: 250,
+                            child: Text(
+                              'Người tạo: ${listIo[index].creatorName}' ?? '',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text('Ngày tạo: ${listIo[index].createDay}'),
                         ],
                       ),
                     ),
@@ -107,32 +121,28 @@ class _IoManagementState extends State<IoManagement> {
                 );
               },
             ),
-                  const SizedBox(height: 100,),
-        
+            const SizedBox(height: 100),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            backgroundColor: Themes.gradientDeepClr,
-            label: const Text(
-              'Thêm phiếu nhập',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            onPressed: () {
-                      Get.to(const CreateInputSlipScreen());
-
-            },
+        icon: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: Themes.gradientDeepClr,
+        label: const Text(
+          'Thêm phiếu nhập',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-        );
-    
+        ),
+        onPressed: () {
+          Get.to(const CreateInputSlipScreen());
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 }
