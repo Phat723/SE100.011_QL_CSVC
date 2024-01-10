@@ -242,7 +242,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                                                   null &&
                                               tempItems[index].imageURL != '')
                                             SizedBox(
-                                              height: 170,
+                                              height: 158,
                                               child: ClipRRect(
                                                 borderRadius:
                                                     const BorderRadius.only(
@@ -261,7 +261,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                                                   null &&
                                               tempItems[index].imageURL == '')
                                             SizedBox(
-                                              height: 170,
+                                              height: 140,
                                               child: ClipRRect(
                                                 borderRadius:
                                                     const BorderRadius.only(
@@ -286,7 +286,7 @@ class _DeviceTypeManagementState extends State<DeviceTypeManagement> {
                                             height: 5,
                                           ),
                                           Container(
-                                            width: 300,
+                                            width: 200,
                                             height: 50,
                                             decoration: const BoxDecoration(
                                                 borderRadius: BorderRadius.only(

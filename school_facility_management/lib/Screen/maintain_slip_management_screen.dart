@@ -36,24 +36,25 @@ class _MaintainSlipManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        title: const Text(
-          'Quản Lý Phiếu Bảo Trì',
-          style: TextStyle(fontSize: 20),
-        ),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          title: const Text(
+            'Quản Lý Phiếu Bảo Trì',
+            style: TextStyle(fontSize: 20),
+          ),
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
             ),
           ),
-        ),
-        actions: [
+          actions: [
           IconButton(onPressed: () {
     Navigator.of(context).push(
                         MaterialPageRoute(
@@ -61,151 +62,225 @@ class _MaintainSlipManagementScreenState
                       );
           }, icon: const Icon(Icons.add_box_rounded),)
         ],
-      ),
-      body: Center(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: dataMaintainSlip.snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text("Đã xảy ra lỗi");
-            }
-            if (snapshot.hasData) {
-              maintainList.clear();
-              for (var data in snapshot.data!.docs) {
-                maintainList.add(MaintainSlip.fromSnapshot(data));
+        ),
+        body: Center(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: dataMaintainSlip.orderBy('Create Day',descending: true).snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text("Đã xảy ra lỗi");
               }
-            }
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: maintainList.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(MaintainSlipInfo(
-                                receivedMaintainSlip: maintainList[index]));
-                          },
-                          child: Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 3,
-                            child: ListTile(
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    maintainList[index].maintainID,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: getStatusColor(
-                                          maintainList[index].maintainStatus),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5.0,
-                                      horizontal: 7.0,
-                                    ),
-                                    child: Text(
-                                      maintainList[index].maintainStatus,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+              if (snapshot.hasData) {
+                maintainList.clear();
+                for (var data in snapshot.data!.docs) {
+                  maintainList.add(MaintainSlip.fromSnapshot(data));
+                }
+              }
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: maintainList.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            key: Key(maintainList[index].maintainID),
+                            confirmDismiss: (direction) async {
+                              if (maintainList[index].maintainStatus ==
+                                  'Đang bảo trì') {
+                                // Trạng thái là 'Đang bảo trì', không cho xóa
+                                return false;
+                              } else if (maintainList[index].maintainStatus ==
+                                  'Hoàn thành') {
+                                // Hiển thị hộp thoại xác nhận khi trạng thái là 'Hoàn thành'
+                                bool confirmDelete = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Xác nhận xóa"),
+                                      content: const Text(
+                                          "Bạn có chắc muốn xóa phiếu này không?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text("Không"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text("Có"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                if (confirmDelete) {
+                                  _deleteMaintainSlip(
+                                      maintainList[index].maintainID);
+                                }
+
+                                return confirmDelete;
+                              } else {
+                                // Trường hợp khác, cho phép xóa
+                                _deleteMaintainSlip(
+                                    maintainList[index].maintainID);
+                                return true;
+                              }
+                            },
+                            background: Container(
+                              color: Colors.redAccent,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20.0),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
                               ),
-                              subtitle: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 8),
-                                  const Divider(),
-                                  Row(
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                // Navigate to detail page when tapped
+                                Get.to(
+                                      () => MaintainSlipInfo(
+                                    receivedMaintainSlip: maintainList[index],
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 3,
+                                child: ListTile(
+                                  title: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('Người Tạo:',
-                                          style: AppTheme.body1),
                                       Text(
-                                        maintainList[index].creatorName,
-                                        style: AppTheme.title,
+                                        maintainList[index].maintainID,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('Ngày Tạo: ',
-                                          style: AppTheme.body1),
-                                      Text(
-                                        "${DateFormat('dd/MM/yyyy').format(
-                                              maintainList[index]
-                                                  .createDay
-                                                  .toDate(),
-                                            )} - ${DateFormat('HH:mm').format(
-                                              maintainList[index]
-                                                  .createDay
-                                                  .toDate(),
-                                            )}",
-                                        style: const TextStyle(
-                                            color: Colors.blue),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('Ngày Kết Thúc: ',
-                                          style: AppTheme.body1,),
-                                      Text(
-                                        "${DateFormat('dd/MM/yyyy').format(
-                                              maintainList[index]
-                                                  .finishDay!
-                                                  .toDate(),
-                                            )} - ${DateFormat('HH:mm').format(
-                                              maintainList[index]
-                                                  .finishDay!
-                                                  .toDate(),
-                                            )}",
-                                        style: const TextStyle(
-                                          color: Colors.blue,
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: getStatusColor(
+                                            maintainList[index].maintainStatus,
+                                          ),
+                                          borderRadius:
+                                          BorderRadius.circular(50),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0,
+                                          horizontal: 7.0,
+                                        ),
+                                        child: Text(
+                                          maintainList[index].maintainStatus,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ],
+                                  subtitle: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 8),
+                                      Divider(),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text('Người Tạo:',
+                                              style: AppTheme.body1),
+                                          Text(
+                                            maintainList[index].creatorName,
+                                            style: AppTheme.title,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text('Ngày Tạo: ',
+                                              style: AppTheme.body1),
+                                          Text(
+                                            DateFormat('dd/MM/yyyy').format(
+                                              maintainList[index]
+                                                  .createDay
+                                                  .toDate(),
+                                            ) +
+                                                " - " +
+                                                DateFormat('HH:mm').format(
+                                                  maintainList[index]
+                                                      .createDay
+                                                      .toDate(),
+                                                ),
+                                            style: const TextStyle(
+                                                color: Colors.blue),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text('Ngày Kết Thúc: ',
+                                              style: AppTheme.body1),
+                                          (maintainList[index].finishDay !=
+                                              null)
+                                              ? Text(
+                                            maintainList[index]
+                                                .maintainStatus ==
+                                                'Đang bảo trì'
+                                                ? ''
+                                                : "${DateFormat('dd/MM/yyyy').format(
+                                              maintainList[index]
+                                                  .finishDay!
+                                                  .toDate(),
+                                            )} - ${DateFormat('HH:mm').format(
+                                              maintainList[index]
+                                                  .finishDay!
+                                                  .toDate(),
+                                            )}" ??
+                                                '',
+                                            style: const TextStyle(
+                                              color: Colors.blue,
+                                            ),
+                                          )
+                                              : const Text(''),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

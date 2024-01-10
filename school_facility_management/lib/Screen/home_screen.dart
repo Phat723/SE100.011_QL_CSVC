@@ -289,7 +289,6 @@ int currentIndex = 0;
                       }
                     },
                     child: Container(
-                      height: 100,
                       margin: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -301,7 +300,7 @@ int currentIndex = 0;
                         children: [
                           Icon(
                             iconList[index],
-                            size: 50,
+                            size: 45,
                             color: colors[index]
                                 ,
                           ),

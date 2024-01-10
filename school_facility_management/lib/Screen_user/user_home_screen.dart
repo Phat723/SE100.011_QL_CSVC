@@ -220,7 +220,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             (index == 0)
                                 ? Icons.report_problem_rounded
                                 : Icons.rate_review,
-                            size: 100,
+                            size: 90,
                             color:
                                 (index == 0) ? Colors.amber : Colors.blueAccent,
                           ),

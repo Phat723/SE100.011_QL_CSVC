@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Device_Detail_Controllers.dart';
 import 'package:school_facility_management/Controllers/InOut_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
+import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 
 class CreateInputSlipScreen extends StatefulWidget {
@@ -38,6 +39,23 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Tạo phiếu nhập',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
@@ -70,7 +88,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                         child: DropdownButton(
                           hint: DropdownMenuItem(
                             value: deviceTypeSelected,
-                            child: const Text("Chose Device Type"),
+                            child: const Text("Chọn danh mục thiết bị"),
                           ),
                           isExpanded: true,
                           value: deviceTypeSelected,
@@ -124,7 +142,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                           value: deviceSelected,
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text("Devices"),
+                            child: Text("Chọn loại thiết bị"),
                           ),
                         ),
                         value: deviceSelected,
@@ -144,8 +162,9 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               ),
               TextFormField(
                 controller: detailController.deviceDetailNameController,
+                
                 decoration: InputDecoration(
-                  hintText: 'Device Detail Name',
+                  hintText: 'Tên thiết bị',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black12),
@@ -166,30 +185,30 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                         onPressed: () {
                           readExcelFile();
                         },
-                        child: Text('Add Excel file')),
+                        child: Text('Thêm bằng file excel')),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        inOutController.items.add(
-                          DeviceDetail(
-                            deviceDetailId:
-                                "${detailController.deviceDetailNameController.text}detail_id",
-                            storeCode: storeCode,
-                            deviceDetailName: detailController
-                                .deviceDetailNameController.text,
-                            deviceStatus: "Disable",
-                            deviceId: "${deviceSelected}Device_id",
-                            deviceTypeId: "${deviceTypeSelected}Type_id",
-                            deviceCost: "10000",
-                            maintainTime: 2,
-                            storingDay: DateTime.now().toString(),
-                          ),
-                        );
-                        detailController.deviceDetailNameController.clear();
-                      });
-                    },
-                    child: const Text('Add to list'),
+                  SizedBox(width: 8,),
+                  Expanded(
+                    child: ElevatedButton(
+                                    onPressed: () {
+                    setState(() {
+                      inOutController.items.add(DeviceDetail(
+                          deviceCost: '222',
+                          maintainTime: 15,
+                          deviceDetailId:
+                              "${detailController.deviceDetailNameController.text}detail_id",
+                          storeCode: storeCode,
+                          deviceDetailName:
+                              detailController.deviceDetailNameController.text,
+                          deviceStatus: "Disable",
+                          deviceId: "${deviceSelected}Device_id",
+                          deviceTypeId: "${deviceTypeSelected}Type_id",
+                          storingDay: ''));
+                      detailController.deviceDetailNameController.clear();
+                    });
+                                    },
+                                    child: const Text('Add to list'),
+                                  ),
                   ),
                 ],
               ),
@@ -219,26 +238,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               //     }
               //   },
               // ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    inOutController.items.add(DeviceDetail(
-                        deviceCost: '222',
-                        maintainTime: 15,
-                        deviceDetailId:
-                            "${detailController.deviceDetailNameController.text}detail_id",
-                        storeCode: storeCode,
-                        deviceDetailName:
-                            detailController.deviceDetailNameController.text,
-                        deviceStatus: "Disable",
-                        deviceId: "${deviceSelected}Device_id",
-                        deviceTypeId: "${deviceTypeSelected}Type_id",
-                        storingDay: ''));
-                    detailController.deviceDetailNameController.clear();
-                  });
-                },
-                child: const Text('Add to list'),
-              ),
+              
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -252,13 +252,13 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                       columns: const [
                         DataColumn(
                             label: Text(
-                          'Tên Thiết bị',
-                          style: AppTheme.title,
+                          'Tên Thiết bị', 
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                         )),
                         DataColumn(
                             label: Text(
                           'Phòng',
-                          style: AppTheme.title,
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                         )),
                         DataColumn(
                             label: Text(
@@ -274,7 +274,7 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                               Text(
                                 inOutController.items[index]
                                     .toMap()['DeviceDetail Name'],
-                                overflow: TextOverflow.visible,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             DataCell(Text(inOutController.items[index]
