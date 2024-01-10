@@ -10,8 +10,10 @@ import 'package:school_facility_management/Screen/in_out_management.dart';
 import 'package:school_facility_management/Screen/maintain_slip_management_screen.dart';
 import 'package:school_facility_management/Screen/report_management_screen.dart';
 import 'package:school_facility_management/Screen/room_management_screen.dart';
+import 'package:school_facility_management/Screen/statistical_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import 'package:school_facility_management/Screen/violate_management_screen.dart';
+import 'package:school_facility_management/Screen_user/feedback_management.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Colors.indigo,
     Colors.purple,
     Colors.blueGrey,
+    Colors.deepOrange,
+    Colors.blueAccent
   ];
 
   List<IconData> iconList =
@@ -42,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.error_outline,
     Icons.room,
     Icons.handyman_rounded,
+     Icons.star,
+     Icons.bar_chart,
   ];
 
   List<String> textList = [
@@ -53,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'Vi phạm',
     'Phòng',
     'Bảo trì',
+    'Đánh giá',
+    'Thống kê',
   ];
 
 
@@ -236,7 +244,7 @@ int currentIndex = 0;
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 3,
                 childAspectRatio: 1,
-                children: List.generate(8, (index) {
+                children: List.generate(10, (index) {
                   return GestureDetector(
                     onTap: () {
                       if (index == 0) {
@@ -285,6 +293,18 @@ int currentIndex = 0;
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (_) => const MaintainSlipManagementScreen()),
+                        );
+                      }
+                      if (index == 8) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const FeedbackManagementPage()),
+                        );
+                      }
+                      if (index == 9) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const LineChartSample2()),
                         );
                       }
                     },

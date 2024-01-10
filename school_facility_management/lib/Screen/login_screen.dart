@@ -144,11 +144,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           String role = document['Role'];
                           switch (role) {
                             case 'User':
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (_) => const NavigatorHomeScreen()));
-                              showWarmingDialog(context);
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const NavigatorHomeScreen()),
+                                    (route) => false,
+                              );
                               print("Login Successfull");
 
                               break;
@@ -208,13 +209,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextButton(
                         onPressed: () {
                           authController
-                              .loginUser('2409huynhphat@gmail.com', '123456')
+                              .loginUser('s@gmail.com', '222222')
                               .then((user) {
                             print("Login Successfull");
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => const UserHomeScreen()),
+                                  builder: (_) => const NavigatorHomeScreen()),
                               (route) => false,
                             );
                           });
