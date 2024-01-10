@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:school_facility_management/Controllers/Room_Controller.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
+import 'package:school_facility_management/UserModel/devices_detail_model.dart';
 import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
 import 'package:school_facility_management/UserModel/user_model.dart';
 
@@ -20,6 +22,7 @@ class MaintainSlipInfo extends StatefulWidget {
 
 class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
   MaintainSlip? maintainSlip;
+  RoomController roomController = Get.put(RoomController());
   String confirmName = "";
 
   @override
@@ -95,7 +98,7 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                 Flexible(
                   child: _buildInfoItem(
                     "Ngày Kết Thúc",
-                    formattedDate(maintainSlip?.finishDay),
+                    formattedDate(Timestamp.now()),
                     TextStyle(fontSize: 14),
                   ),
                 ),
@@ -179,7 +182,13 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                     }).toList(),
                     "Maintain Status": "Hoàn thành",
                     "Confirm Name": confirmName,
+                    "Finish Day": maintainSlip!.finishDay,
                   });
+                  for(var data in maintainSlip!.maintainDeviceList){
+                    DeviceDetail myDeviceDetail = DeviceDetail.fromMap(data);
+                    myDeviceDetail.deviceStatus = 'Sẵn dùng';
+                    roomController.updateStatusDevice(myDeviceDetail.areaId, myDeviceDetail.roomId, myDeviceDetail, myDeviceDetail.deviceStatus);
+                  }
                   Get.back();
                 },
                 style: ElevatedButton.styleFrom(
@@ -189,8 +198,8 @@ class _MaintainSlipInfoState extends State<MaintainSlipInfo> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 24,
                   ),

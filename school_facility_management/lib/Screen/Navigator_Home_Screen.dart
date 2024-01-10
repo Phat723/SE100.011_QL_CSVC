@@ -7,6 +7,7 @@ import 'package:school_facility_management/Screen/device_type_management_screen.
 import 'package:school_facility_management/Screen/in_out_management.dart';
 import 'package:school_facility_management/Screen/report_management_screen.dart';
 import 'package:school_facility_management/Screen/room_management_screen.dart';
+import 'package:school_facility_management/Screen/statistical_screen.dart';
 import 'package:school_facility_management/Screen/user_management_screen.dart';
 import 'package:school_facility_management/Screen/violate_management_screen.dart';
 import '../CustomDrawer/drawer_user_controller.dart';
@@ -120,6 +121,11 @@ class _HomeScreenState extends State<NavigatorHomeScreen> {
         case DrawerIndex.Maintain:
           setState(() {
             screenView = const MaintainSlipManagementScreen();
+          });
+          break;
+        case DrawerIndex.Statistical:
+          setState(() {
+            screenView = const LineChartSample2();
           });
           break;
         default:
