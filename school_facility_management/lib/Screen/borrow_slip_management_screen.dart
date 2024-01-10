@@ -100,7 +100,9 @@ class _BorrowSlipManagementScreenState
                                         ),
                                         Container(
                                           decoration: BoxDecoration(
-                                            color: Colors.redAccent,
+                                             color: getStatusColor(
+                                            borrowList[index].status,
+                                          ),
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
@@ -193,5 +195,15 @@ class _BorrowSlipManagementScreenState
         ),
       ),
     );
+  }
+    Color getStatusColor(String status) {
+    switch (status) {
+      case 'Chưa trả':
+        return Colors.redAccent;
+      case 'Đã trả':
+        return Colors.greenAccent;
+      default:
+        return Colors.black; // Default color
+    }
   }
 }

@@ -368,6 +368,8 @@ class _CreateBorrowSlipScreenState extends State<CreateBorrowSlipScreen> {
                       .doc(borrowID)
                       .set(newBorrowSlip.toMap());
                   dv.clearData();
+                  Get.back();
+                  Get.snackbar('Thông báo', 'Tạo phiếu mượn mới thành công');
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue,

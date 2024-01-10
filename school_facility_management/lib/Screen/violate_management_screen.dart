@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
@@ -193,6 +194,10 @@ class _ViolateManagementState extends State<ViolateManagement> {
               const SizedBox(height: 20,),
               TextField(
                 controller: moneyController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: const InputDecoration(labelText: 'Tiền phạt'),
               ),
             ],
@@ -242,6 +247,10 @@ class _ViolateManagementState extends State<ViolateManagement> {
 
               TextField(
                 controller: moneyController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: const InputDecoration(labelText: 'Tiền phạt'),
               ),
             ],

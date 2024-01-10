@@ -80,7 +80,12 @@ class _IoManagementState extends State<IoManagement> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(listIo[index].createCase),
+                              // Text('Mã phiếu:'),
+                              Text(
+                                  '${listIo[index].inOutId.toUpperCase()}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              // Text(listIo[index].createCase),
                               Row(
                                 children: [
                                   Icon(
