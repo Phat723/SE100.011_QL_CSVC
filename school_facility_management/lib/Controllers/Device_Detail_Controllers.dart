@@ -42,6 +42,8 @@ class DeviceDetailController extends GetxController {
     deviceOwnerController.clear();
     deviceDetailNameController.clear();
     storeCodeController.clear();
+    deviceMaintainTimeController.clear();
+    deviceCostController.clear();
     areaId.value = '';
     roomId.value = '';
   }

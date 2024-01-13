@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:school_facility_management/Controllers/Auth_Controllers.dart';
 import 'package:school_facility_management/Controllers/Room_Controller.dart';
-import 'package:school_facility_management/Model/AppTheme.dart';
 import 'package:school_facility_management/Model/theme.dart';
 import 'package:school_facility_management/UserModel/maintain_slip_model.dart';
 
@@ -26,23 +25,24 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
   List<Map<String, dynamic>> saveDeviceList = [];
   RoomController roomController = Get.put(RoomController());
   AuthController authController = Get.put(AuthController());
-  String createName="";
+  String createName = "";
+
   @override
   void initState() {
     fetchDataFromLastCollection();
-
     super.initState();
     getCurrentUser();
   }
+
   Future<void> getCurrentUser() async {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser != null) {
       DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-      await FirebaseFirestore.instance
-          .collection("Client")
-          .doc(firebaseUser.uid)
-          .get();
+          await FirebaseFirestore.instance
+              .collection("Client")
+              .doc(firebaseUser.uid)
+              .get();
 
       MyUser currentUser = MyUser.fromSnapShot(userSnapshot);
 
@@ -56,47 +56,56 @@ class _CreateMaintainSlipState extends State<CreateMaintainSlip> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-            foregroundColor: Colors.white,
-            title: const Text(
-              'Tạo phiếu bảo trì',
-              style: TextStyle(fontSize: 20),
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Tạo phiếu bảo trì',
+          style: TextStyle(fontSize: 20),
+        ),
+        elevation: 0,
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
-            elevation: 0,
-            centerTitle: true,
-            flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Themes.gradientDeepClr, Themes.gradientLightClr],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
-            ),
-            
           ),
-floatingActionButton: FloatingActionButton.extended(
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            backgroundColor: Themes.gradientDeepClr,
-            label: const Text(
-              'Tạo phiếu bảo trì',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            onPressed: () {
-              createMaintainTicket();
-              Get.back();
-            },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: Themes.gradientDeepClr,
+        label: const Text(
+          'Tạo phiếu bảo trì',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+        ),
+        onPressed: () {
+          if (saveDeviceList.isEmpty) {
+            Get.snackbar('Thông báo', 'Vui lòng chọn thiết bị để bảo chì');
+            Get.back();
+          } else {
+            createMaintainTicket();
+            Get.snackbar('Thông báo', 'Tạo phiếu bảo chì mới thành công');
+            Get.back();
+          }
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Vui lòng chọn các thiết bị cần bảo trì',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            ),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -125,13 +134,17 @@ floatingActionButton: FloatingActionButton.extended(
                           setState(() {
                             bool isAdding = selected != null && selected;
                             isAdding
-                                ? listDeviceName.add(
+                                ? listDeviceName.addIf(
+                                    listDeviceDetail[index].deviceStatus ==
+                                        'Sẵn dùng',
                                     listDeviceDetail[index].deviceDetailName)
                                 : listDeviceName.remove(
                                     listDeviceDetail[index].deviceDetailName);
                             isAdding
-                                ? saveDeviceList
-                                    .add(listDeviceDetail[index].toMap())
+                                ? saveDeviceList.addIf(
+                                    listDeviceDetail[index].deviceStatus ==
+                                        'Sẵn dùng',
+                                    listDeviceDetail[index].toMap())
                                 : saveDeviceList.removeWhere((element) =>
                                     element['DeviceDetail Name'] ==
                                     listDeviceDetail[index].deviceDetailName);
@@ -143,7 +156,6 @@ floatingActionButton: FloatingActionButton.extended(
                 );
               },
             ),
-            
           ],
         ),
       ),
@@ -152,7 +164,7 @@ floatingActionButton: FloatingActionButton.extended(
 
   void createMaintainTicket() {
     setState(() {
-      for(int index =0; index < saveDeviceList.length; index++){
+      for (int index = 0; index < saveDeviceList.length; index++) {
         var db = FirebaseFirestore.instance
             .collection("DevicesType")
             .doc(saveDeviceList[index]['DeviceType Id'])
@@ -163,7 +175,8 @@ floatingActionButton: FloatingActionButton.extended(
         saveDeviceList[index]['DeviceDetail Status'] = "Đang bảo trì";
         db.update(saveDeviceList[index]);
         DeviceDetail deviceDetail = DeviceDetail.fromMap(saveDeviceList[index]);
-        roomController.updateStatusDevice(deviceDetail.areaId, deviceDetail.roomId, deviceDetail, deviceDetail.deviceStatus);
+        roomController.updateStatusDevice(deviceDetail.areaId,
+            deviceDetail.roomId, deviceDetail, deviceDetail.deviceStatus);
       }
       String maintainId = generateRandomString();
       MaintainSlip maintainSlip = MaintainSlip(
@@ -231,15 +244,16 @@ floatingActionButton: FloatingActionButton.extended(
           for (QueryDocumentSnapshot devicesDetailDoc
               in devicesDetailSnapshot.docs) {
             setState(() {
-              listDeviceDetail.add(DeviceDetail.fromMap(devicesDetailDoc.data()
-                  as Map<String,
+              listDeviceDetail.addIf(
+                  (devicesDetailDoc.data()
+                          as Map<String, dynamic>)['DeviceDetail Status'] ==
+                      'Sẵn dùng',
+                  DeviceDetail.fromMap(devicesDetailDoc.data() as Map<String,
                       dynamic>)); // Dữ liệu từ "DevicesDetail" document
             });
           }
         }
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }
 }

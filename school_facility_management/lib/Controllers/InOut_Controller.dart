@@ -31,7 +31,7 @@ class InOutController extends GetxController {
           .collection("Devices")
           .doc(items[index].deviceId)
           .collection("Device Detail")
-          .doc(items[index].toMap()["DeviceDetail Id"])
+          .doc(items[index].deviceDetailId)
           .set(items[index].toMap());
     }
     items.clear();

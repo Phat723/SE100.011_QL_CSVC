@@ -65,7 +65,7 @@ class AuthController extends GetxController {
         .collection("Client")
         .doc(id)
         .get()
-        .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+        .then((DocumentSnapshot snapshot) {
       myUser = MyUser.fromSnapShot(snapshot);
     });
     return myUser;

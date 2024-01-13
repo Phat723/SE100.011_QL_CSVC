@@ -175,62 +175,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 50,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          authController
-                              .loginUser(
-                                  'nguyentruongbaoduy2003@gmail.com', '123456')
-                              .then((user) {
-                            print("Login Successfull");
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const NavigatorHomeScreen()),
-                              (route) => false,
-                            );
-                          });
-                        },
-                        child: const Text(
-                          "Quản trị viên",
-                          style: TextStyle(
-                            color: Themes.selectedClr,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          authController
-                              .loginUser('s@gmail.com', '222222')
-                              .then((user) {
-                            print("Login Successfull");
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const NavigatorHomeScreen()),
-                              (route) => false,
-                            );
-                          });
-                        },
-                        child: const Text(
-                          "Người dùng",
-                          style: TextStyle(
-                            color: Themes.selectedClr,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

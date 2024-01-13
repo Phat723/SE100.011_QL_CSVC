@@ -379,15 +379,29 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Padding(
+                      Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 4),
-                        child: Text(
-                          "Hình thiết bị hỏng:",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
+                            const EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+                        child: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Hình thiết bị hỏng:',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -626,6 +640,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     if (dv.areaId.value.isEmpty ||
         dv.roomId.value.isEmpty ||
         selectedDevice.isEmpty ||
+        imageFile.isEmpty ||
         descriptionController.text.isEmpty) {
       setState(() {
         _isSaving = false;

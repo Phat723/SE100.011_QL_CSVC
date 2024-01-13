@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:excel/excel.dart';
+import 'package:excel/excel.dart' as ex;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -162,9 +162,152 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
               ),
               TextFormField(
                 controller: detailController.deviceDetailNameController,
-                
                 decoration: InputDecoration(
                   hintText: 'Tên thiết bị',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.black12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.black12),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Area')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
+                      return Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.black12)),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: detailController.areaId.value == ''
+                                  ? null
+                                  : detailController.areaId.value,
+                              hint: DropdownMenuItem(
+                                value: detailController.areaId.value,
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Khu vực"),
+                                ),
+                              ),
+                              items: snapshot.data?.docs
+                                  .map((DocumentSnapshot document) {
+                                return DropdownMenuItem(
+                                  value: document.id,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        (document.data() as Map)['Area Name']),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  detailController.areaId.value = newValue!;
+                                  detailController.roomCollection =
+                                      detailController.areaCollection
+                                          .doc(detailController.areaId.value)
+                                          .collection("Room");
+                                  detailController.roomId.value =
+                                      ''; //Tránh xung đột với dropdown phía dưới
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 5),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: detailController.roomCollection?.snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
+                      return Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.black12)),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: detailController.roomId.value == ''
+                                  ? null
+                                  : detailController.roomId.value,
+                              hint: DropdownMenuItem(
+                                value: detailController.roomId.value,
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Phòng"),
+                                ),
+                              ),
+                              items: snapshot.data?.docs
+                                  .map((DocumentSnapshot document) {
+                                return DropdownMenuItem(
+                                  value: document.id,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        (document.data() as Map)['Room Name']),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  detailController.roomId.value = newValue!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                controller: detailController.deviceMaintainTimeController,
+                decoration: InputDecoration(
+                  hintText: 'Thời hạn bảo trì',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.black12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.black12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: detailController.deviceCostController,
+                decoration: InputDecoration(
+                  hintText: 'Giá trị của thiết bị',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black12),
@@ -185,60 +328,39 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                         onPressed: () {
                           readExcelFile();
                         },
-                        child: Text('Thêm bằng file excel')),
+                        child: const Text('Thêm bằng file excel')),
                   ),
-                  SizedBox(width: 8,),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   Expanded(
                     child: ElevatedButton(
-                                    onPressed: () {
-                    setState(() {
-                      inOutController.items.add(DeviceDetail(
-                          deviceCost: '222',
-                          maintainTime: 15,
-                          deviceDetailId:
-                              "${detailController.deviceDetailNameController.text}detail_id",
-                          storeCode: storeCode,
-                          deviceDetailName:
-                              detailController.deviceDetailNameController.text,
-                          deviceStatus: "Disable",
-                          deviceId: "${deviceSelected}Device_id",
-                          deviceTypeId: "${deviceTypeSelected}Type_id",
-                          storingDay: ''));
-                      detailController.deviceDetailNameController.clear();
-                    });
-                                    },
-                                    child: const Text('Thêm vào danh sách'),
-                                  ),
+                      onPressed: () {
+                        setState(() {
+                          inOutController.items.add(DeviceDetail(
+                            roomId: detailController.roomId.value,
+                              areaId: detailController.areaId.value,
+                              deviceCost:
+                                  detailController.deviceCostController.text,
+                              maintainTime: int.parse(detailController
+                                  .deviceMaintainTimeController.text),
+                              deviceDetailId:
+                                  "${detailController.deviceDetailNameController.text}detail_id",
+                              storeCode: storeCode,
+                              deviceDetailName: detailController
+                                  .deviceDetailNameController.text,
+                              deviceStatus: "Disable",
+                              deviceId: "$deviceSelected",
+                              deviceTypeId: "$deviceTypeSelected",
+                              storingDay: DateTime.now().toString()));
+                          detailController.deviceDetailNameController.clear();
+                        });
+                      },
+                      child: const Text('Thêm vào danh sách'),
+                    ),
                   ),
                 ],
               ),
-              // FutureBuilder(
-              //   initialData: data,
-              //   future: null,
-              //   builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-              //     if (snapshot.connectionState == ConnectionState.waiting) {
-              //       return CircularProgressIndicator();
-              //     } else {
-              //       return DataTable(
-              //         columns: const [
-              //           DataColumn(label: Text('Tên thiết bị')),
-              //           DataColumn(label: Text('Giá tiền')),
-              //           DataColumn(label: Text('Ngày nhập')),
-              //           // Thêm các cột khác tương tự
-              //         ],
-              //         rows: snapshot.data!.map((row) {
-              //           return DataRow(cells: [
-              //             DataCell(Text(row['deviceDetailId'].toString())),
-              //             DataCell(Text(row['deviceCost'].toString())),
-              //             DataCell(Text(row['storingDay'].toString())),
-              //             // Thêm các ô dữ liệu khác tương tự
-              //           ]);
-              //         }).toList(),
-              //       );
-              //     }
-              //   },
-              // ),
-              
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -252,13 +374,15 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
                       columns: const [
                         DataColumn(
                             label: Text(
-                          'Tên Thiết bị', 
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          'Tên Thiết bị',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         )),
                         DataColumn(
                             label: Text(
                           'Phòng',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         )),
                         DataColumn(
                             label: Text(
@@ -326,55 +450,55 @@ class _CreateInputSlipScreenState extends State<CreateInputSlipScreen> {
   Future<void> readExcelFile() async {
     pickFile();
     String file = '';
-    if(_selectedFiles != null){
+    if (_selectedFiles != null) {
       file = _selectedFiles!.path;
     }
     var bytes = File(file).readAsBytesSync();
-    var excel = Excel.decodeBytes(bytes);
+    ex.Excel excel = ex.Excel.decodeBytes(bytes);
     var table = excel.tables.keys.first;
-    Sheet sheet = excel.tables[table]!;
+    ex.Sheet sheet = excel.tables[table]!;
     String storeId = detailController.generateInOutId();
     inOutController.generateInputSlip(storeId, 'Mua mới');
     var myRows = excel.tables[table]?.rows;
     for (int i = 1; i < myRows!.length; i++) {
       data.add({
         "DeviceDetail Id": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i))
             .value
             .toString(),
         "Device Id": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i))
             .value
             .toString(),
         "DeviceType Id": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i))
             .value
             .toString(),
         "AreaId": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i))
             .value
             .toString(),
         "RoomId": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: i))
             .value
             .toString(),
         "StoreCode": storeCode,
         "DeviceDetail Name": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: i))
             .value
             .toString(),
         "DeviceDetail Status": 'Sẵn dùng',
         "DeviceDetail Owner": '',
         "DeviceDetail Cost": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: i))
             .value
             .toString(),
         "DeviceDetail MaintainTime": int.parse(sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: i))
             .value
             .toString()),
         "DeviceDetail StoringDay": sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: i))
+            .cell(ex.CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: i))
             .value
             .toString(),
       });

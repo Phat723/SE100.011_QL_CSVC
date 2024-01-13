@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyUser {
-  final String? id;
+  final String id;
   final String imageURL;
   final String username;
   final String password;
@@ -13,7 +13,7 @@ class MyUser {
   final String state;
 
   const MyUser({
-    this.id,
+    required this.id,
     required this.username,
     required this.password,
     required this.birthDay,
@@ -38,18 +38,19 @@ class MyUser {
       "imageURL":imageURL
     };
   }
-  factory MyUser.fromSnapShot( DocumentSnapshot<Map<String, dynamic>>document){
+  factory MyUser.fromSnapShot( DocumentSnapshot snapshot){
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return MyUser(
-      id: document["Id"],
-      username: document["Username"],
-      password: document["Password"],
-      birthDay: document["BirthDay"],
-      gender: document["Gender"],
-      phoneNum: document["PhoneNumber"],
-      email: document["Email"],
-      role: document["Role"],
-      state: document["State"],
-      imageURL: document["imageURL"]
+      id: data["Id"],
+      username: data["Username"],
+      password: data["Password"],
+      birthDay: data["BirthDay"],
+      gender: data["Gender"],
+      phoneNum: data["PhoneNumber"],
+      email: data["Email"],
+      role: data["Role"],
+      state: data["State"],
+      imageURL: data["imageURL"]
     );
   }
 }

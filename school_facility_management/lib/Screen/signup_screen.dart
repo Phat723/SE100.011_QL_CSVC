@@ -39,13 +39,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _validateEmail = false;
   bool _validatePhone = false;
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    usernameController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: phoneController,
                     validator: (value) {
                       if (value!.isEmpty) {

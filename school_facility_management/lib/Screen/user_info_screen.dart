@@ -482,6 +482,7 @@ void _loadUserData() async {
                     child: ElevatedButton(
                       onPressed: () {
                         _updateUserInfo();
+                        Get.back();
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.blue, // Thay đổi màu nền của nút
@@ -571,16 +572,8 @@ void _loadUserData() async {
           role: role,
           imageURL: imageURL,
         );
-
         await myDB.set(updatedUser.toMap());
         Get.snackbar('School facility', 'Cập nhật thành công');
-
-         Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => UserManagement(),
-        ),
-      );
       } catch (error) {
         print("Error during user information update: $error");
         Get.snackbar('Error', '$error');
